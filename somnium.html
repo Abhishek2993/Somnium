@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Dream Saving App</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                background-color: #f0f4f8;
+                color: #333;
+                margin: 0;
+                padding: 20px;
+            }
+            .container {
+                max-width: 800px;
+                margin: 0 auto;
+                background: #fff;
+                padding: 20px;
+                border-radius: 10px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            }
+            h1 {
+                text-align: center;
+                color: #2c3e50;
+            }
+            .profile,
+            .dream-entry,
+            .calendar,
+            .community {
+                margin-bottom: 20px;
+            }
+            textarea {
+                width: 100%;
+                height: 100px;
+                padding: 10px;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+            }
+            button {
+                background-color: #3498db;
+                color: white;
+                padding: 10px 20px;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+            }
+            button:hover {
+                background-color: #2980b9;
+            }
+            .calendar-grid {
+                display: grid;
+                grid-template-columns: repeat(7, 1fr);
+                gap: 5px;
+                text-align: center;
+            }
+            .calendar-day {
+                padding: 10px;
+                background: #ecf0f1;
+                border-radius: 5px;
+            }
+            .dream-highlight {
+                background: #e74c3c;
+                color: white;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1>Dream Saving App</h1>
+
+            <!-- User Profile Section -->
+            <div class="profile">
+                <h2>User Profile</h2>
+                <p id="username">Welcome, <span>Dreamer123</span>!</p>
+                <p>Sleep Schedule: 11 PM - 7 AM</p>
+            </div>
+
+            <!-- Dream Entry Section -->
+            <div class="dream-entry">
+                <h2>Log a Dream</h2>
+                <input type="datetime-local" id="sleepTime" required />
+                <textarea
+                    id="dreamText"
+                    placeholder="Write your dream here... (AI will fix grammar)"
+                ></textarea>
+                <button onclick="saveDream()">Save Dream</button>
+                <p id="aiOutput"></p>
+            </div>
+
+            <!-- Calendar Section -->
+            <div class="calendar">
+                <h2>Dream Calendar</h2>
+                <div class="calendar-grid" id="calendarGrid">
+                    <!-- Days will be populated by JS -->
+                </div>
+            </div>
+
+            <!-- Community Section -->
+            <div class="community">
+                <h2>Dream Community</h2>
+                <p>Find people with similar dreams:</p>
+                <select id="genreFilter">
+                    <option value="all">All Genres</option>
+                    <option value="Fantasy">Fantasy</option>
+                    <option value="Horror">Horror</option>
+                    <option value="Adventure">Adventure</option>
+                </select>
+                <button onclick="findFriends()">Find Friends</button>
+                <div id="friendList"></div>
+            </div>
+        </div>
+
+        <script>
+            // Sample dream data (replace with backend storage)
+            let dreams = [];
+
+            // Populate calendar (simplified for March 2025)
+            function populateCalendar() {
+                const calendarGrid = document.getElementById("calendarGrid");
+                calendarGrid.innerHTML = "";
+                for (let day = 1; day <= 31; day++) {
+                    const dayDiv = document.createElement("div");
+                    dayDiv.className = "calendar-day";
+                    dayDiv.textContent = day;
+                    if (
+                        dreams.some((d) => new Date(d.date).getDate() === day)
+                    ) {
+                        dayDiv.className += " dream-highlight";
+                        dayDiv.onclick = () => showDream(day);
+                    }
+                    calendarGrid.appendChild(dayDiv);
+                }
+            }
+
+            // Save dream and simulate AI processing
+            function saveDream() {
+                const sleepTime = document.getElementById("sleepTime").value;
+                const dreamText = document.getElementById("dreamText").value;
+                if (!sleepTime || !dreamText) {
+                    alert("Please enter sleep time and dream text!");
+                    return;
+                }
+
+                // Simulate AI grammar fix, title, and genre
+                const fixedText = dreamText
+                    .replace("i", "I")
+                    .replace(/\.(\w)/g, ". $1"); // Basic fixes
+                const title = `Dream of ${dreamText.split(" ")[1] || "Mystery"}`; // Simple title
+                const genre = dreamText.includes("dark") ? "Horror" : "Fantasy"; // Basic genre logic
+
+                const dream = {
+                    date: sleepTime,
+                    text: fixedText,
+                    title,
+                    genre,
+                };
+                dreams.push(dream);
+
+                document.getElementById("aiOutput").innerHTML = `
+                <strong>Title:</strong> ${title}<br>
+                <strong>Genre:</strong> ${genre}<br>
+                <strong>Fixed Text:</strong> ${fixedText}
+            `;
+                document.getElementById("dreamText").value = "";
+                populateCalendar();
+            }
+
+            // Show dream details
+            function showDream(day) {
+                const dream = dreams.find(
+                    (d) => new Date(d.date).getDate() === day,
+                );
+                if (dream) {
+                    alert(
+                        `Title: ${dream.title}\nGenre: ${dream.genre}\nDream: ${dream.text}`,
+                    );
+                }
+            }
+
+            // Simulate finding friends
+            function findFriends() {
+                const genre = document.getElementById("genreFilter").value;
+                const friendList = document.getElementById("friendList");
+                friendList.innerHTML =
+                    genre === "all"
+                        ? "<p>Friend1 (Fantasy), Friend2 (Horror)</p>"
+                        : `<p>Friend with ${genre} dreams</p>`;
+            }
+
+            // Initialize calendar
+            populateCalendar();
+        </script>
+    </body>
+</html>

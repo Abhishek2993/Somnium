@@ -1,0 +1,39 @@
+App Brief: Dream Saving Application
+
+Project Name: Dream Saving App (working title options: DreamCatcher, Somnium, OneiroLog, etc.)
+
+Target Audience: Dream recallers and enthusiasts who want to record, analyze, and connect over their dreams.
+
+Purpose: To create a digital platform where users can log their dreams, track them over time, and discover others with similar dream experiences, enhanced by AI-driven features.
+
+Core Features:
+
+User Profile:
+Basic info (username, optional sleep schedule).
+Personalized settings (e.g., reminders for logging dreams).
+Dream Entry:
+Input fields: Date and time of sleep, free-text dream description (with optional tags like mood or lucidity).
+AI corrects grammatical errors in dream text automatically.
+Dream Calendar:
+Visual calendar displaying dates with saved dreams.
+Clicking a date reveals the dream’s AI-generated title and details.
+AI Analysis:
+Generates a creative title for each dream (e.g., "Whispering Shadows of the Glowing Blade").
+Identifies the dream’s genre (e.g., Fantasy, Horror, Adventure) based on content.
+Community Feature:
+Users can find and connect with others who have similar dream genres (e.g., via follow/friend requests).
+Option to share dreams publicly or with approved connections for reading.
+Technical Requirements:
+
+Platform: Web-based (initially), with potential for mobile expansion.
+Frontend: HTML/CSS/JavaScript for a clean, intuitive interface (e.g., calendar grid, text input forms).
+Backend: Database to store user profiles, dreams, and connections (e.g., SQLite, Firebase).
+AI Integration: NLP for grammar correction, title generation, and genre classification (via API or custom model).
+Privacy: Encrypt dream data for user security.
+Desired Aesthetic**:
+
+Soft, dreamy color palette (e.g., blues, purples, whites).
+Minimalist yet evocative design (e.g., moon or web motifs).
+Goal**:
+
+To provide a seamless, engaging experience for users to preserve their dreams, uncover patterns, and build a community around shared dream genres, leveraging AI for enhanced creativity and usability.
