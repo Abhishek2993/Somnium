@@ -21,6 +21,14 @@
                 --btn-text: #ffffff;
                 --calendar-day-bg: #f8f9fa;
                 --modal-bg: #ffffff;
+                --secondary-text: #4a5568;
+                --muted-text: #718096;
+                --link-color: #6558d5;
+                --stat-text: #2d3748;
+                --modal-text: #1a202c;
+                --calendar-text: #000000;
+                --dream-card-text: #2d3748;
+                --dream-meta-text: #4a5568;
             }
             
             [data-theme="dark"] {
@@ -36,6 +44,14 @@
                 --btn-text: #ffffff;
                 --calendar-day-bg: #272741;
                 --modal-bg: #272741;
+                --secondary-text: #cbd5e0;
+                --muted-text: #a0aec0;
+                --link-color: #b8a9ff;
+                --stat-text: #e2e8f0;
+                --modal-text: #f7fafc;
+                --calendar-text: #edf2f7;
+                --dream-card-text: #e2e8f0;
+                --dream-meta-text: #cbd5e0;
             }
             
             body {
@@ -46,6 +62,47 @@
                 padding: 0;
                 background-image: url('https://www.transparenttextures.com/patterns/star-dust.png');
                 transition: background-color 0.3s ease, color 0.3s ease;
+            }
+
+            /* Apply text colors to specific elements */
+            .profile-details p, .form-group p, .tab-content p {
+                color: var(--secondary-text);
+            }
+            
+            .stat-label {
+                color: var(--muted-text);
+            }
+            
+            .stat-number {
+                color: var(--primary);
+            }
+            
+            a, .link {
+                color: var(--link-color);
+            }
+            
+            .calendar-day {
+                color: var(--calendar-text);
+            }
+            
+            .dream-card {
+                color: var(--dream-card-text);
+            }
+            
+            .dream-meta {
+                color: var(--dream-meta-text);
+            }
+            
+            input, select, textarea {
+                color: var(--text);
+            }
+            
+            label {
+                color: var(--secondary-text);
+            }
+            
+            .modal-content {
+                color: var(--modal-text);
             }
             
             .container {
@@ -317,7 +374,8 @@
             
             .calendar-day:hover {
                 transform: scale(1.05);
-                background: #e9ecef;
+                background: var(--secondary);
+                color: var(--btn-text);
             }
             
             .dream-highlight {
