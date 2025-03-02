@@ -65,16 +65,18 @@
             }
 
             /* Apply text colors to specific elements */
-            .profile-details p, .form-group p, .tab-content p {
+            .profile-details p, .form-group p, .tab-content p, .dream-library p, .community p {
                 color: var(--secondary-text);
             }
             
             .stat-label {
                 color: var(--muted-text);
+                font-weight: 500;
             }
             
             .stat-number {
                 color: var(--primary);
+                text-shadow: 0 0 2px rgba(0,0,0,0.2);
             }
             
             a, .link {
@@ -177,7 +179,8 @@
             .tab {
                 padding: 10px 20px;
                 cursor: pointer;
-                background: white;
+                background: var(--input-bg);
+                color: var(--text);
                 border: 1px solid transparent;
                 border-bottom: none;
                 margin-right: 5px;
@@ -240,6 +243,7 @@
             
             .profile-details p {
                 margin: 5px 0;
+                color: var(--secondary-text);
             }
             
             .profile-stats {
@@ -276,7 +280,7 @@
             input, select, textarea {
                 width: 100%;
                 padding: 10px;
-                border: 1px solid #ddd;
+                border: 1px solid var(--accent);
                 border-radius: 5px;
                 font-family: inherit;
                 box-sizing: border-box;
