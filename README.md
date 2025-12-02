@@ -28,6 +28,10 @@ npm run start:dry
 
 Note: Keep your environment configured for git and be sure you have permission to push to the remote repository if you choose to push.
 
+Important note on dry-run:
+
+- `--dry-run` prevents the script from pushing commits to the remote. However, it still creates commits locally; if you don’t want local commits, run this on a throwaway branch or revert afterwards.
+
 Example: Create 100 commits in 2024 (dry-run):
 
 ```bash

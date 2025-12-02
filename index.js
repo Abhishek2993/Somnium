@@ -29,6 +29,10 @@ const makeCommits = async (n = 260, { dryRun = false, year = undefined } = {}) =
 
   // Determine the year we should target for commits; if specified and valid, use that.
   const targetYear = typeof year === 'number' && !Number.isNaN(year) ? year : moment().year();
+  const currentYear = moment().year();
+  if (targetYear > currentYear) {
+    throw new Error(`Invalid target year: ${targetYear}. Year cannot be in the future.`);
+  }
 
   // We'll generate dates throughout the target year (Jan 1 -> Dec 31)
   const start = moment().year(targetYear).startOf('year');
