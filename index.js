@@ -22,20 +22,25 @@ const markCommit = (x, y) => {
   });
 };
 
-const makeCommits = async (n = 260, { dryRun = false } = {}) => {
+const makeCommits = async (n = 260, { dryRun = false, year = undefined } = {}) => {
   const git = simpleGit();
   const maxCount = Math.max(0, parseInt(n, 10) || 260);
   console.log(`Generating ${maxCount} commits (dryRun=${dryRun})`);
 
+  // Determine the year we should target for commits; if specified and valid, use that.
+  const targetYear = typeof year === 'number' && !Number.isNaN(year) ? year : moment().year();
+
+  // We'll generate dates throughout the target year (Jan 1 -> Dec 31)
+  const start = moment().year(targetYear).startOf('year');
+  const end = moment().year(targetYear).endOf('year');
+
   for (let i = 0; i < maxCount; i++) {
     const x = random.int(0, 54);
     const y = random.int(0, 6);
-    const date = moment()
-      .subtract(1, "y")
-      .add(1, "d")
-      .add(x, "w")
-      .add(y, "d")
-      .format();
+    // Random day within the target year
+    const days = end.diff(start, 'days');
+    const randOffset = random.int(0, days);
+    const date = start.clone().add(randOffset, 'days').add(random.int(0, 23), 'hours').add(random.int(0, 59), 'minutes').format();
 
     const data = { date };
     // Write file synchronously so we don't hit background FS/callback races
@@ -55,18 +60,36 @@ const makeCommits = async (n = 260, { dryRun = false } = {}) => {
   }
 };
 
-// Parse CLI args: `node index.js [count] [--dry-run]` or `--count=<n>`
+// Parse CLI args: `node index.js [count] [year] [--dry-run]` or `--count=<n> --year=<yy>`
 const argv = process.argv.slice(2);
-let count = argv.length > 0 ? parseInt(argv[0], 10) : undefined;
-argv.forEach((a) => {
+let count = undefined;
+let year = undefined;
+argv.forEach((a, i) => {
   if (a.startsWith("--count=")) {
     count = parseInt(a.split("=")[1], 10);
+    return;
+  }
+  if (a.startsWith("--year=")) {
+    year = parseInt(a.split("=")[1], 10);
+    return;
+  }
+  // positional args
+  const asInt = parseInt(a, 10);
+  if (!Number.isNaN(asInt)) {
+    if (i === 0) count = asInt;
+    else if (i === 1) year = asInt;
   }
 });
 const dryRun = argv.includes("--dry-run");
 
-// Default to 260 commits unless a valid argument is provided
+// Defaults
 const DEFAULT_COMMIT_COUNT = 260;
-makeCommits(count || DEFAULT_COMMIT_COUNT, { dryRun }).catch((err) => {
+const DEFAULT_COMMIT_YEAR = 2025;
+
+// Values to pass into generator
+const finalCount = count || DEFAULT_COMMIT_COUNT;
+const finalYear = year || DEFAULT_COMMIT_YEAR;
+
+makeCommits(finalCount, { dryRun, year: finalYear }).catch((err) => {
   console.error("Error making commits:", err);
 });

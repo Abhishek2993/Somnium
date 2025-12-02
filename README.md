@@ -27,3 +27,9 @@ npm run start:dry
 ```
 
 Note: Keep your environment configured for git and be sure you have permission to push to the remote repository if you choose to push.
+
+Example: Create 100 commits in 2024 (dry-run):
+
+```bash
+node index.js 100 2024 --dry-run
+```
