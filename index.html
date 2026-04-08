@@ -1,793 +1,1658 @@
 <!doctype html>
 <html lang="en" data-theme="dark">
+
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Somnium — Dream Journal</title>
-<meta name="description" content="Your personal dream journal. Log, analyze, and discover media inspired by your dreams."/>
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
-<style>
-:root{
-  --bg:#0d0d1a;--surface:#13132a;--surface2:#1a1a35;--glass:rgba(255,255,255,0.05);
-  --border:rgba(139,92,246,0.25);--primary:#8b5cf6;--primary2:#a78bfa;--accent:#c4b5fd;
-  --text:#f1f5f9;--muted:#94a3b8;--success:#22c55e;--warn:#f59e0b;--danger:#ef4444;
-  --card:rgba(26,26,53,0.8);--shadow:0 8px 32px rgba(0,0,0,0.4);
-  --genre1:#8b5cf6;--genre2:#ec4899;--genre3:#06b6d4;--genre4:#f59e0b;--genre5:#22c55e;
-  --genre6:#ef4444;--genre7:#a855f7;--genre8:#f97316;--genre9:#84cc16;--genre10:#3b82f6;
-}
-[data-theme="light"]{
-  --bg:#f0effe;--surface:#fff;--surface2:#f5f3ff;--glass:rgba(139,92,246,0.06);
-  --border:rgba(139,92,246,0.2);--text:#1e1b4b;--muted:#6b7280;--card:rgba(255,255,255,0.9);
-  --shadow:0 4px 20px rgba(139,92,246,0.15);
-}
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;transition:background .3s,color .3s}
-canvas#stars{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.6}
-[data-theme="light"] canvas#stars{opacity:.15}
-.app{display:flex;min-height:100vh;position:relative;z-index:1}
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Somnium — Dream Journal</title>
+  <meta name="description"
+    content="Your personal dream journal. Log, analyze, and discover media inspired by your dreams." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Inter:wght@300;400;500;600&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    :root {
+      --bg: #0d0d1a;
+      --surface: #13132a;
+      --surface2: #1a1a35;
+      --glass: rgba(255, 255, 255, 0.05);
+      --border: rgba(139, 92, 246, 0.25);
+      --primary: #8b5cf6;
+      --primary2: #a78bfa;
+      --accent: #c4b5fd;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+      --success: #22c55e;
+      --warn: #f59e0b;
+      --danger: #ef4444;
+      --card: rgba(26, 26, 53, 0.8);
+      --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+      --genre1: #8b5cf6;
+      --genre2: #ec4899;
+      --genre3: #06b6d4;
+      --genre4: #f59e0b;
+      --genre5: #22c55e;
+      --genre6: #ef4444;
+      --genre7: #a855f7;
+      --genre8: #f97316;
+      --genre9: #84cc16;
+      --genre10: #3b82f6;
+    }
 
-/* Sidebar */
-.sidebar{width:220px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:24px 0;position:fixed;top:0;left:0;height:100vh;z-index:100;transition:background .3s,transform .3s}
-.logo{padding:0 20px 28px;display:flex;align-items:center;gap:10px}
-.logo i{color:var(--primary);font-size:1.4rem}
-.logo span{font-family:'Cinzel',serif;font-size:1.2rem;background:linear-gradient(135deg,var(--primary),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.nav-item{display:flex;align-items:center;gap:12px;padding:12px 20px;cursor:pointer;border-radius:0;transition:all .2s;color:var(--muted);font-size:.9rem;font-weight:500;border-left:3px solid transparent}
-.nav-item:hover{background:var(--glass);color:var(--text)}
-.nav-item.active{background:linear-gradient(90deg,rgba(139,92,246,.15),transparent);color:var(--primary2);border-left-color:var(--primary)}
-.nav-item i{width:18px;text-align:center}
-.sidebar-footer{margin-top:auto;padding:16px 20px;display:flex;align-items:center;justify-content:space-between}
-.theme-btn{background:var(--glass);border:1px solid var(--border);color:var(--text);width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:.9rem;transition:all .2s}
-.theme-btn:hover{background:var(--primary);border-color:var(--primary)}
-.menu-btn{display:none;position:fixed;top:16px;left:16px;z-index:200;background:var(--primary);border:none;color:#fff;width:40px;height:40px;border-radius:10px;cursor:pointer;font-size:1rem}
+    [data-theme="light"] {
+      --bg: #f0effe;
+      --surface: #fff;
+      --surface2: #f5f3ff;
+      --glass: rgba(139, 92, 246, 0.06);
+      --border: rgba(139, 92, 246, 0.2);
+      --text: #1e1b4b;
+      --muted: #6b7280;
+      --card: rgba(255, 255, 255, 0.9);
+      --shadow: 0 4px 20px rgba(139, 92, 246, 0.15);
+    }
 
-/* Main */
-.main{margin-left:220px;flex:1;padding:32px;min-height:100vh}
-.page{display:none;animation:fadeIn .4s ease}
-.page.active{display:block}
-@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
-.page-title{font-family:'Cinzel',serif;font-size:1.6rem;color:var(--primary2);margin-bottom:8px}
-.page-sub{color:var(--muted);font-size:.9rem;margin-bottom:28px}
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0
+    }
 
-/* Cards / Glass */
-.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px;backdrop-filter:blur(12px);transition:all .3s}
-.card:hover{border-color:var(--primary);box-shadow:var(--shadow)}
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+      transition: background .3s, color .3s
+    }
 
-/* Forms */
-.form-group{margin-bottom:18px}
-.form-group label{display:block;font-size:.82rem;font-weight:600;color:var(--accent);margin-bottom:6px;text-transform:uppercase;letter-spacing:.04em}
-input,select,textarea{width:100%;padding:11px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:inherit;font-size:.9rem;transition:border .2s,box-shadow .2s;outline:none}
-input:focus,select:focus,textarea:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(139,92,246,0.15)}
-textarea{height:130px;resize:vertical}
-select option{background:var(--surface)}
+    canvas#stars {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      opacity: .6
+    }
 
-/* Buttons */
-.btn{display:inline-flex;align-items:center;gap:8px;padding:11px 22px;background:linear-gradient(135deg,var(--primary),#7c3aed);color:#fff;border:none;border-radius:10px;font-family:inherit;font-size:.88rem;font-weight:600;cursor:pointer;transition:all .25s;box-shadow:0 4px 12px rgba(139,92,246,0.3)}
-.btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(139,92,246,0.45)}
-.btn:active{transform:translateY(0)}
-.btn-sm{padding:7px 14px;font-size:.78rem;border-radius:8px}
-.btn-ghost{background:var(--glass);box-shadow:none;border:1px solid var(--border);color:var(--text)}
-.btn-ghost:hover{background:var(--surface2);box-shadow:none}
-.btn-danger{background:linear-gradient(135deg,var(--danger),#b91c1c);box-shadow:0 4px 12px rgba(239,68,68,.3)}
+    [data-theme="light"] canvas#stars {
+      opacity: .15
+    }
 
-/* Tags / chips */
-.chip{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:20px;font-size:.73rem;font-weight:600;border:1px solid;transition:all .2s;cursor:default}
-.chip-primary{background:rgba(139,92,246,.15);border-color:rgba(139,92,246,.4);color:var(--accent)}
-.chip-muted{background:var(--glass);border-color:var(--border);color:var(--muted)}
-.mood-row,.type-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
-.sel-tag{padding:7px 14px;border-radius:20px;font-size:.8rem;font-weight:500;cursor:pointer;border:1px solid var(--border);background:var(--glass);color:var(--muted);transition:all .2s}
-.sel-tag.active{background:var(--primary);border-color:var(--primary);color:#fff}
+    .app {
+      display: flex;
+      min-height: 100vh;
+      position: relative;
+      z-index: 1
+    }
 
-/* Genre badge colors */
-.genre-badge{padding:3px 10px;border-radius:12px;font-size:.72rem;font-weight:700;color:#fff;display:inline-block}
+    /* Sidebar */
+    .sidebar {
+      width: 220px;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      padding: 24px 0;
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100vh;
+      z-index: 100;
+      transition: background .3s, transform .3s
+    }
 
-/* Stats row */
-.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:28px}
-.stat-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px;text-align:center;backdrop-filter:blur(12px)}
-.stat-num{font-size:2rem;font-weight:700;color:var(--primary);font-family:'Cinzel',serif}
-.stat-lbl{font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-top:4px}
+    .logo {
+      padding: 0 20px 28px;
+      display: flex;
+      align-items: center;
+      gap: 10px
+    }
 
-/* Dream Library Grid */
-.dream-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px;margin-top:20px}
-.dream-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px;cursor:pointer;transition:all .3s;position:relative;backdrop-filter:blur(12px)}
-.dream-card:hover{transform:translateY(-4px);border-color:var(--primary);box-shadow:0 8px 24px rgba(139,92,246,0.2)}
-.dream-card h4{font-size:.95rem;font-weight:600;margin:10px 0 8px;color:var(--text)}
-.dream-card p{font-size:.8rem;color:var(--muted);line-height:1.5;margin-bottom:10px}
-.dream-card .meta{display:flex;justify-content:space-between;align-items:center;font-size:.72rem;color:var(--muted);margin-top:10px;border-top:1px solid var(--border);padding-top:10px}
-.del-btn{position:absolute;top:12px;right:12px;background:transparent;border:none;color:var(--muted);cursor:pointer;font-size:.85rem;opacity:0;transition:all .2s}
-.dream-card:hover .del-btn{opacity:1}
-.del-btn:hover{color:var(--danger)}
+    .logo i {
+      color: var(--primary);
+      font-size: 1.4rem
+    }
 
-/* Calendar */
-.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:16px}
-.cal-hdr{text-align:center;font-size:.7rem;font-weight:700;color:var(--muted);padding:8px 4px;text-transform:uppercase}
-.cal-day{aspect-ratio:1;display:flex;align-items:center;justify-content:center;border-radius:10px;font-size:.8rem;cursor:default;background:var(--surface2);color:var(--muted);position:relative;transition:all .2s}
-.cal-day.has-dream{background:linear-gradient(135deg,rgba(139,92,246,.3),rgba(167,139,250,.15));color:var(--accent);cursor:pointer;border:1px solid rgba(139,92,246,.35);font-weight:600}
-.cal-day.has-dream:hover{background:var(--primary);color:#fff}
-.cal-day.today{border:1px solid var(--primary);color:var(--primary2)}
-.cal-dot{position:absolute;bottom:4px;left:50%;transform:translateX(-50%);width:5px;height:5px;border-radius:50%;background:var(--primary)}
-.cal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
-.cal-nav h3{font-family:'Cinzel',serif;font-size:1rem;color:var(--primary2)}
+    .logo span {
+      font-family: 'Cinzel', serif;
+      font-size: 1.2rem;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent
+    }
 
-/* Analysis result */
-.analysis-box{background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:20px;margin-top:20px}
-.analysis-box h3{font-family:'Cinzel',serif;color:var(--primary2);margin-bottom:4px}
-.keywords-row{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0}
-.rec-section{margin-top:18px}
-.rec-section h4{font-size:.82rem;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;display:flex;align-items:center;gap:6px}
-.rec-list{display:flex;flex-direction:column;gap:8px}
-.rec-item{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:10px 14px;display:flex;align-items:flex-start;gap:10px}
-.rec-item .rec-icon{font-size:1.1rem;flex-shrink:0;margin-top:1px}
-.rec-item .rec-info strong{font-size:.85rem;color:var(--text);display:block}
-.rec-item .rec-info span{font-size:.75rem;color:var(--muted)}
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 20px;
+      cursor: pointer;
+      border-radius: 0;
+      transition: all .2s;
+      color: var(--muted);
+      font-size: .9rem;
+      font-weight: 500;
+      border-left: 3px solid transparent
+    }
 
-/* Bar chart */
-.genre-bar-wrap{margin-top:6px}
-.genre-bar-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
-.genre-bar-label{font-size:.78rem;color:var(--muted);width:80px;flex-shrink:0;text-align:right}
-.genre-bar-track{flex:1;background:var(--surface2);border-radius:4px;height:8px;overflow:hidden}
-.genre-bar-fill{height:100%;border-radius:4px;transition:width .8s ease}
-.genre-bar-count{font-size:.75rem;color:var(--muted);width:24px;text-align:right}
+    .nav-item:hover {
+      background: var(--glass);
+      color: var(--text)
+    }
 
-/* Modal */
-.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:500;backdrop-filter:blur(4px);align-items:center;justify-content:center}
-.modal-overlay.open{display:flex}
-.modal{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:28px;max-width:640px;width:90%;max-height:85vh;overflow-y:auto;position:relative;animation:slideUp .35s ease}
-@keyframes slideUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
-.modal-close{position:absolute;top:16px;right:16px;background:var(--glass);border:1px solid var(--border);color:var(--muted);width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:.9rem;transition:all .2s;display:flex;align-items:center;justify-content:center}
-.modal-close:hover{background:var(--danger);color:#fff;border-color:var(--danger)}
-.modal h2{font-family:'Cinzel',serif;color:var(--primary2);font-size:1.2rem;margin-bottom:12px;padding-right:32px}
-.modal .meta-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
-.modal .dream-text{font-size:.88rem;color:var(--muted);line-height:1.7;margin-bottom:16px;border-left:3px solid var(--primary);padding-left:14px}
+    .nav-item.active {
+      background: linear-gradient(90deg, rgba(139, 92, 246, .15), transparent);
+      color: var(--primary2);
+      border-left-color: var(--primary)
+    }
 
-/* Loading */
-.spinner{display:inline-block;width:22px;height:22px;border:3px solid rgba(139,92,246,.2);border-top-color:var(--primary);border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle}
-@keyframes spin{to{transform:rotate(360deg)}}
-.loading-state{text-align:center;padding:20px;color:var(--muted);font-size:.88rem;display:flex;align-items:center;justify-content:center;gap:10px}
+    .nav-item i {
+      width: 18px;
+      text-align: center
+    }
 
-/* Profile avatar */
-.avatar{width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--primary),#7c3aed);display:flex;align-items:center;justify-content:center;font-size:1.8rem;color:#fff;flex-shrink:0;border:3px solid rgba(139,92,246,.4)}
-.profile-hdr{display:flex;align-items:center;gap:20px;margin-bottom:24px}
-.profile-hdr h2{font-family:'Cinzel',serif;font-size:1.3rem;color:var(--primary2)}
-.profile-hdr p{color:var(--muted);font-size:.85rem;margin-top:4px}
+    .sidebar-footer {
+      margin-top: auto;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between
+    }
 
-/* Search bar */
-.search-bar{position:relative;margin-bottom:16px}
-.search-bar i{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:.85rem}
-.search-bar input{padding-left:36px}
+    .theme-btn {
+      background: var(--glass);
+      border: 1px solid var(--border);
+      color: var(--text);
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: .9rem;
+      transition: all .2s
+    }
 
-/* Empty state */
-.empty-state{text-align:center;padding:48px 20px;color:var(--muted)}
-.empty-state i{font-size:2.5rem;margin-bottom:12px;opacity:.4}
-.empty-state p{font-size:.9rem}
+    .theme-btn:hover {
+      background: var(--primary);
+      border-color: var(--primary)
+    }
 
-/* Responsive */
-@media(max-width:768px){
-  .sidebar{transform:translateX(-100%)}
-  .sidebar.open{transform:translateX(0)}
-  .main{margin-left:0;padding:20px 16px}
-  .menu-btn{display:flex;align-items:center;justify-content:center}
-  .stats-row{grid-template-columns:repeat(3,1fr)}
-  .dream-grid{grid-template-columns:1fr}
-  .main{padding-top:64px}
-}
-</style>
+    .menu-btn {
+      display: none;
+      position: fixed;
+      top: 16px;
+      left: 16px;
+      z-index: 200;
+      background: var(--primary);
+      border: none;
+      color: #fff;
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 1rem
+    }
+
+    /* Main */
+    .main {
+      margin-left: 220px;
+      flex: 1;
+      padding: 32px;
+      min-height: 100vh
+    }
+
+    .page {
+      display: none;
+      animation: fadeIn .4s ease
+    }
+
+    .page.active {
+      display: block
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(12px)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0)
+      }
+    }
+
+    .page-title {
+      font-family: 'Cinzel', serif;
+      font-size: 1.6rem;
+      color: var(--primary2);
+      margin-bottom: 8px
+    }
+
+    .page-sub {
+      color: var(--muted);
+      font-size: .9rem;
+      margin-bottom: 28px
+    }
+
+    /* Cards / Glass */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      backdrop-filter: blur(12px);
+      transition: all .3s
+    }
+
+    .card:hover {
+      border-color: var(--primary);
+      box-shadow: var(--shadow)
+    }
+
+    /* Forms */
+    .form-group {
+      margin-bottom: 18px
+    }
+
+    .form-group label {
+      display: block;
+      font-size: .82rem;
+      font-weight: 600;
+      color: var(--accent);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: .04em
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      padding: 11px 14px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text);
+      font-family: inherit;
+      font-size: .9rem;
+      transition: border .2s, box-shadow .2s;
+      outline: none
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.15)
+    }
+
+    textarea {
+      height: 130px;
+      resize: vertical
+    }
+
+    select option {
+      background: var(--surface)
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 11px 22px;
+      background: linear-gradient(135deg, var(--primary), #7c3aed);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-family: inherit;
+      font-size: .88rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all .25s;
+      box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3)
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(139, 92, 246, 0.45)
+    }
+
+    .btn:active {
+      transform: translateY(0)
+    }
+
+    .btn-sm {
+      padding: 7px 14px;
+      font-size: .78rem;
+      border-radius: 8px
+    }
+
+    .btn-ghost {
+      background: var(--glass);
+      box-shadow: none;
+      border: 1px solid var(--border);
+      color: var(--text)
+    }
+
+    .btn-ghost:hover {
+      background: var(--surface2);
+      box-shadow: none
+    }
+
+    .btn-danger {
+      background: linear-gradient(135deg, var(--danger), #b91c1c);
+      box-shadow: 0 4px 12px rgba(239, 68, 68, .3)
+    }
+
+    /* Tags / chips */
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: .73rem;
+      font-weight: 600;
+      border: 1px solid;
+      transition: all .2s;
+      cursor: default
+    }
+
+    .chip-primary {
+      background: rgba(139, 92, 246, .15);
+      border-color: rgba(139, 92, 246, .4);
+      color: var(--accent)
+    }
+
+    .chip-muted {
+      background: var(--glass);
+      border-color: var(--border);
+      color: var(--muted)
+    }
+
+    .mood-row,
+    .type-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 4px
+    }
+
+    .sel-tag {
+      padding: 7px 14px;
+      border-radius: 20px;
+      font-size: .8rem;
+      font-weight: 500;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      background: var(--glass);
+      color: var(--muted);
+      transition: all .2s
+    }
+
+    .sel-tag.active {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #fff
+    }
+
+    /* Genre badge colors */
+    .genre-badge {
+      padding: 3px 10px;
+      border-radius: 12px;
+      font-size: .72rem;
+      font-weight: 700;
+      color: #fff;
+      display: inline-block
+    }
+
+    /* Stats row */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 28px
+    }
+
+    .stat-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 18px;
+      text-align: center;
+      backdrop-filter: blur(12px)
+    }
+
+    .stat-num {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--primary);
+      font-family: 'Cinzel', serif
+    }
+
+    .stat-lbl {
+      font-size: .75rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      margin-top: 4px
+    }
+
+    /* Dream Library Grid */
+    .dream-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+      margin-top: 20px
+    }
+
+    .dream-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 18px;
+      cursor: pointer;
+      transition: all .3s;
+      position: relative;
+      backdrop-filter: blur(12px)
+    }
+
+    .dream-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--primary);
+      box-shadow: 0 8px 24px rgba(139, 92, 246, 0.2)
+    }
+
+    .dream-card h4 {
+      font-size: .95rem;
+      font-weight: 600;
+      margin: 10px 0 8px;
+      color: var(--text)
+    }
+
+    .dream-card p {
+      font-size: .8rem;
+      color: var(--muted);
+      line-height: 1.5;
+      margin-bottom: 10px
+    }
+
+    .dream-card .meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: .72rem;
+      color: var(--muted);
+      margin-top: 10px;
+      border-top: 1px solid var(--border);
+      padding-top: 10px
+    }
+
+    .del-btn {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: transparent;
+      border: none;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: .85rem;
+      opacity: 0;
+      transition: all .2s
+    }
+
+    .dream-card:hover .del-btn {
+      opacity: 1
+    }
+
+    .del-btn:hover {
+      color: var(--danger)
+    }
+
+    /* Calendar */
+    .cal-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 6px;
+      margin-top: 16px
+    }
+
+    .cal-hdr {
+      text-align: center;
+      font-size: .7rem;
+      font-weight: 700;
+      color: var(--muted);
+      padding: 8px 4px;
+      text-transform: uppercase
+    }
+
+    .cal-day {
+      aspect-ratio: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 10px;
+      font-size: .8rem;
+      cursor: default;
+      background: var(--surface2);
+      color: var(--muted);
+      position: relative;
+      transition: all .2s
+    }
+
+    .cal-day.has-dream {
+      background: linear-gradient(135deg, rgba(139, 92, 246, .3), rgba(167, 139, 250, .15));
+      color: var(--accent);
+      cursor: pointer;
+      border: 1px solid rgba(139, 92, 246, .35);
+      font-weight: 600
+    }
+
+    .cal-day.has-dream:hover {
+      background: var(--primary);
+      color: #fff
+    }
+
+    .cal-day.today {
+      border: 1px solid var(--primary);
+      color: var(--primary2)
+    }
+
+    .cal-dot {
+      position: absolute;
+      bottom: 4px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--primary)
+    }
+
+    .cal-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px
+    }
+
+    .cal-nav h3 {
+      font-family: 'Cinzel', serif;
+      font-size: 1rem;
+      color: var(--primary2)
+    }
+
+    /* Analysis result */
+    .analysis-box {
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px;
+      margin-top: 20px
+    }
+
+    .analysis-box h3 {
+      font-family: 'Cinzel', serif;
+      color: var(--primary2);
+      margin-bottom: 4px
+    }
+
+    .keywords-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin: 12px 0
+    }
+
+    .rec-section {
+      margin-top: 18px
+    }
+
+    .rec-section h4 {
+      font-size: .82rem;
+      font-weight: 700;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px
+    }
+
+    .rec-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px
+    }
+
+    .rec-item {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 14px;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px
+    }
+
+    .rec-item .rec-icon {
+      font-size: 1.1rem;
+      flex-shrink: 0;
+      margin-top: 1px
+    }
+
+    .rec-item .rec-info strong {
+      font-size: .85rem;
+      color: var(--text);
+      display: block
+    }
+
+    .rec-item .rec-info span {
+      font-size: .75rem;
+      color: var(--muted)
+    }
+
+    /* Bar chart */
+    .genre-bar-wrap {
+      margin-top: 6px
+    }
+
+    .genre-bar-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px
+    }
+
+    .genre-bar-label {
+      font-size: .78rem;
+      color: var(--muted);
+      width: 80px;
+      flex-shrink: 0;
+      text-align: right
+    }
+
+    .genre-bar-track {
+      flex: 1;
+      background: var(--surface2);
+      border-radius: 4px;
+      height: 8px;
+      overflow: hidden
+    }
+
+    .genre-bar-fill {
+      height: 100%;
+      border-radius: 4px;
+      transition: width .8s ease
+    }
+
+    .genre-bar-count {
+      font-size: .75rem;
+      color: var(--muted);
+      width: 24px;
+      text-align: right
+    }
+
+    /* Modal */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 500;
+      backdrop-filter: blur(4px);
+      align-items: center;
+      justify-content: center
+    }
+
+    .modal-overlay.open {
+      display: flex
+    }
+
+    .modal {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 28px;
+      max-width: 640px;
+      width: 90%;
+      max-height: 85vh;
+      overflow-y: auto;
+      position: relative;
+      animation: slideUp .35s ease
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0)
+      }
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: var(--glass);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: .9rem;
+      transition: all .2s;
+      display: flex;
+      align-items: center;
+      justify-content: center
+    }
+
+    .modal-close:hover {
+      background: var(--danger);
+      color: #fff;
+      border-color: var(--danger)
+    }
+
+    .modal h2 {
+      font-family: 'Cinzel', serif;
+      color: var(--primary2);
+      font-size: 1.2rem;
+      margin-bottom: 12px;
+      padding-right: 32px
+    }
+
+    .modal .meta-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 14px
+    }
+
+    .modal .dream-text {
+      font-size: .88rem;
+      color: var(--muted);
+      line-height: 1.7;
+      margin-bottom: 16px;
+      border-left: 3px solid var(--primary);
+      padding-left: 14px
+    }
+
+    /* Loading */
+    .spinner {
+      display: inline-block;
+      width: 22px;
+      height: 22px;
+      border: 3px solid rgba(139, 92, 246, .2);
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+      vertical-align: middle
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg)
+      }
+    }
+
+    .loading-state {
+      text-align: center;
+      padding: 20px;
+      color: var(--muted);
+      font-size: .88rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px
+    }
+
+    /* Profile avatar */
+    .avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), #7c3aed);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      color: #fff;
+      flex-shrink: 0;
+      border: 3px solid rgba(139, 92, 246, .4)
+    }
+
+    .profile-hdr {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      margin-bottom: 24px
+    }
+
+    .profile-hdr h2 {
+      font-family: 'Cinzel', serif;
+      font-size: 1.3rem;
+      color: var(--primary2)
+    }
+
+    .profile-hdr p {
+      color: var(--muted);
+      font-size: .85rem;
+      margin-top: 4px
+    }
+
+    /* Search bar */
+    .search-bar {
+      position: relative;
+      margin-bottom: 16px
+    }
+
+    .search-bar i {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+      font-size: .85rem
+    }
+
+    .search-bar input {
+      padding-left: 36px
+    }
+
+    /* Empty state */
+    .empty-state {
+      text-align: center;
+      padding: 48px 20px;
+      color: var(--muted)
+    }
+
+    .empty-state i {
+      font-size: 2.5rem;
+      margin-bottom: 12px;
+      opacity: .4
+    }
+
+    .empty-state p {
+      font-size: .9rem
+    }
+
+    /* Responsive */
+    @media(max-width:768px) {
+      .sidebar {
+        transform: translateX(-100%)
+      }
+
+      .sidebar.open {
+        transform: translateX(0)
+      }
+
+      .main {
+        margin-left: 0;
+        padding: 20px 16px
+      }
+
+      .menu-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center
+      }
+
+      .stats-row {
+        grid-template-columns: repeat(3, 1fr)
+      }
+
+      .dream-grid {
+        grid-template-columns: 1fr
+      }
+
+      .main {
+        padding-top: 64px
+      }
+    }
+  </style>
 </head>
+
 <body>
-<canvas id="stars"></canvas>
-<button class="menu-btn" id="menuBtn"><i class="fas fa-bars"></i></button>
+  <canvas id="stars"></canvas>
+  <button class="menu-btn" id="menuBtn"><i class="fas fa-bars"></i></button>
 
-<div class="app">
-  <nav class="sidebar" id="sidebar">
-    <div class="logo"><i class="fas fa-moon"></i><span>Somnium</span></div>
-    <div class="nav-item active" data-page="profile"><i class="fas fa-user-circle"></i>Profile</div>
-    <div class="nav-item" data-page="log"><i class="fas fa-pen-nib"></i>Log Dream</div>
-    <div class="nav-item" data-page="library"><i class="fas fa-book-open"></i>Dream Library</div>
-    <div class="nav-item" data-page="calendar"><i class="fas fa-calendar-alt"></i>Calendar</div>
-    <div class="sidebar-footer">
-      <span style="font-size:.75rem;color:var(--muted)">Theme</span>
-      <button class="theme-btn" id="themeBtn"><i class="fas fa-sun"></i></button>
-    </div>
-  </nav>
+  <div class="app">
+    <nav class="sidebar" id="sidebar">
+      <div class="logo"><i class="fas fa-moon"></i><span>Somnium</span></div>
+      <div class="nav-item active" data-page="profile"><i class="fas fa-user-circle"></i>Profile</div>
+      <div class="nav-item" data-page="log"><i class="fas fa-pen-nib"></i>Log Dream</div>
+      <div class="nav-item" data-page="library"><i class="fas fa-book-open"></i>Dream Library</div>
+      <div class="nav-item" data-page="calendar"><i class="fas fa-calendar-alt"></i>Calendar</div>
+      <div class="sidebar-footer">
+        <div id="apiStatus" style="display:flex;align-items:center;gap:6px;font-size:.72rem;color:var(--muted)">
+          <span id="statusDot"
+            style="width:8px;height:8px;border-radius:50%;background:var(--muted);flex-shrink:0"></span>
+          <span id="statusLabel">Checking...</span>
+        </div>
+        <button class="theme-btn" id="themeBtn"><i class="fas fa-sun"></i></button>
+      </div>
+    </nav>
 
-  <main class="main">
+    <main class="main">
 
-    <!-- Profile Page -->
-    <div class="page active" id="page-profile">
-      <p class="page-title">Profile</p>
-      <p class="page-sub">Your dream statistics and settings</p>
-      <div class="profile-hdr">
-        <div class="avatar"><i class="fas fa-user"></i></div>
-        <div><h2 id="profileName">Dreamer</h2><p id="profileSub"><i class="fas fa-moon"></i> Dream Explorer</p></div>
-      </div>
-      <div class="stats-row">
-        <div class="stat-card"><div class="stat-num" id="statTotal">0</div><div class="stat-lbl">Dreams</div></div>
-        <div class="stat-card"><div class="stat-num" id="statLucid">0</div><div class="stat-lbl">Lucid</div></div>
-        <div class="stat-card"><div class="stat-num" id="statStreak">0</div><div class="stat-lbl">Day Streak</div></div>
-      </div>
-      <div class="card" style="margin-bottom:24px">
-        <h3 style="font-family:'Cinzel',serif;color:var(--primary2);margin-bottom:16px;font-size:1rem">Genre Breakdown</h3>
-        <div class="genre-bar-wrap" id="genreChart"><p style="color:var(--muted);font-size:.85rem">Log dreams to see your genre breakdown.</p></div>
-      </div>
-      <div class="card">
-        <h3 style="font-family:'Cinzel',serif;color:var(--primary2);margin-bottom:16px;font-size:1rem">Settings</h3>
-        <div class="form-group"><label>Display Name</label><input id="settingName" value="Dreamer" placeholder="Your name"/></div>
-        <div class="form-group"><label>Sleep Schedule</label><input id="settingSleep" value="11 PM – 7 AM" placeholder="e.g. 11 PM – 7 AM"/></div>
-        <button class="btn" onclick="saveSettings()"><i class="fas fa-save"></i>Save Settings</button>
-      </div>
-    </div>
-
-    <!-- Log Dream Page -->
-    <div class="page" id="page-log">
-      <p class="page-title">Log a Dream</p>
-      <p class="page-sub">Record every detail — the more you write, the richer the analysis</p>
-      <div class="card">
-        <div class="form-group"><label>Date &amp; Time</label><input type="datetime-local" id="dreamDate"/></div>
-        <div class="form-group">
-          <label>Mood</label>
-          <div class="mood-row" id="moodRow">
-            <span class="sel-tag" data-mood="Happy">😊 Happy</span>
-            <span class="sel-tag" data-mood="Peaceful">😌 Peaceful</span>
-            <span class="sel-tag" data-mood="Anxious">😰 Anxious</span>
-            <span class="sel-tag" data-mood="Excited">🤩 Excited</span>
-            <span class="sel-tag" data-mood="Sad">😢 Sad</span>
-            <span class="sel-tag" data-mood="Confused">😵 Confused</span>
-            <span class="sel-tag" data-mood="Terrified">😱 Terrified</span>
+      <!-- Profile Page -->
+      <div class="page active" id="page-profile">
+        <p class="page-title">Profile</p>
+        <p class="page-sub">Your dream statistics and settings</p>
+        <div class="profile-hdr">
+          <div class="avatar"><i class="fas fa-user"></i></div>
+          <div>
+            <h2 id="profileName">Dreamer</h2>
+            <p id="profileSub"><i class="fas fa-moon"></i> Dream Explorer</p>
           </div>
         </div>
-        <div class="form-group">
-          <label>Dream Type</label>
-          <div class="type-row" id="typeRow">
-            <span class="sel-tag active" data-dtype="Normal">Normal</span>
-            <span class="sel-tag" data-dtype="Lucid">✨ Lucid</span>
-            <span class="sel-tag" data-dtype="Nightmare">🌑 Nightmare</span>
-            <span class="sel-tag" data-dtype="Recurring">🔁 Recurring</span>
+        <div class="stats-row">
+          <div class="stat-card">
+            <div class="stat-num" id="statTotal">0</div>
+            <div class="stat-lbl">Dreams</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num" id="statLucid">0</div>
+            <div class="stat-lbl">Lucid</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num" id="statStreak">0</div>
+            <div class="stat-lbl">Day Streak</div>
           </div>
         </div>
-        <div class="form-group"><label>Dream Description</label><textarea id="dreamText" placeholder="Describe your dream in vivid detail..."></textarea></div>
-        <button class="btn" id="analyzeBtn" onclick="analyzeDream()"><i class="fas fa-magic"></i>Analyze &amp; Preview</button>
+        <div class="card" style="margin-bottom:24px">
+          <h3 style="font-family:'Cinzel',serif;color:var(--primary2);margin-bottom:16px;font-size:1rem">Genre Breakdown
+          </h3>
+          <div class="genre-bar-wrap" id="genreChart">
+            <p style="color:var(--muted);font-size:.85rem">Log dreams to see your genre breakdown.</p>
+          </div>
+        </div>
+        <div class="card">
+          <h3 style="font-family:'Cinzel',serif;color:var(--primary2);margin-bottom:16px;font-size:1rem">Settings</h3>
+          <div class="form-group"><label>Display Name</label><input id="settingName" value="Dreamer"
+              placeholder="Your name" /></div>
+          <div class="form-group"><label>Sleep Schedule</label><input id="settingSleep" value="11 PM – 7 AM"
+              placeholder="e.g. 11 PM – 7 AM" /></div>
+          <button class="btn" onclick="saveSettings()"><i class="fas fa-save"></i>Save Settings</button>
+        </div>
       </div>
 
-      <div id="analysisResult" style="display:none">
-        <div class="analysis-box">
-          <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:10px">
-            <div>
-              <h3 id="resTitle"></h3>
-              <div class="meta-row" style="margin-top:8px">
-                <span class="genre-badge" id="resGenre"></span>
-                <span class="chip chip-muted" id="resMood"></span>
-                <span class="chip chip-muted" id="resType"></span>
-              </div>
+      <!-- Log Dream Page -->
+      <div class="page" id="page-log">
+        <p class="page-title">Log a Dream</p>
+        <p class="page-sub">Record every detail — the more you write, the richer the analysis</p>
+        <div class="card">
+          <div class="form-group"><label>Date &amp; Time</label><input type="datetime-local" id="dreamDate" /></div>
+          <div class="form-group">
+            <label>Mood</label>
+            <div class="mood-row" id="moodRow">
+              <span class="sel-tag" data-mood="Happy">😊 Happy</span>
+              <span class="sel-tag" data-mood="Peaceful">😌 Peaceful</span>
+              <span class="sel-tag" data-mood="Anxious">😰 Anxious</span>
+              <span class="sel-tag" data-mood="Excited">🤩 Excited</span>
+              <span class="sel-tag" data-mood="Sad">😢 Sad</span>
+              <span class="sel-tag" data-mood="Confused">😵 Confused</span>
+              <span class="sel-tag" data-mood="Terrified">😱 Terrified</span>
             </div>
           </div>
-          <p style="margin:14px 0 4px;font-size:.75rem;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.06em">Keywords Detected</p>
-          <div class="keywords-row" id="resKeywords"></div>
-          <p style="margin:14px 0 8px;font-size:.82rem;color:var(--muted);line-height:1.65;border-left:3px solid var(--primary);padding-left:12px" id="resText"></p>
-          <div id="resRecs"></div>
-          <div style="margin-top:20px;display:flex;gap:10px;flex-wrap:wrap">
-            <button class="btn" onclick="saveDream()"><i class="fas fa-bookmark"></i>Save Dream</button>
-            <button class="btn btn-ghost" onclick="cancelAnalysis()"><i class="fas fa-redo"></i>Re-write</button>
+          <div class="form-group">
+            <label>Dream Type</label>
+            <div class="type-row" id="typeRow">
+              <span class="sel-tag active" data-dtype="Normal">Normal</span>
+              <span class="sel-tag" data-dtype="Lucid">✨ Lucid</span>
+              <span class="sel-tag" data-dtype="Nightmare">🌑 Nightmare</span>
+              <span class="sel-tag" data-dtype="Recurring">🔁 Recurring</span>
+            </div>
+          </div>
+          <div class="form-group"><label>Dream Description</label><textarea id="dreamText"
+              placeholder="Describe your dream in vivid detail..."></textarea></div>
+          <button class="btn" id="analyzeBtn" onclick="analyzeDream()"><i class="fas fa-magic"></i>Analyze &amp;
+            Preview</button>
+        </div>
+
+        <div id="analysisResult" style="display:none">
+          <div class="analysis-box">
+            <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:10px">
+              <div>
+                <h3 id="resTitle"></h3>
+                <div class="meta-row" style="margin-top:8px">
+                  <span class="genre-badge" id="resGenre"></span>
+                  <span class="chip chip-muted" id="resMood"></span>
+                  <span class="chip chip-muted" id="resType"></span>
+                </div>
+              </div>
+            </div>
+            <p
+              style="margin:14px 0 4px;font-size:.75rem;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.06em">
+              Keywords Detected</p>
+            <div class="keywords-row" id="resKeywords"></div>
+            <p style="margin:14px 0 8px;font-size:.82rem;color:var(--muted);line-height:1.65;border-left:3px solid var(--primary);padding-left:12px"
+              id="resText"></p>
+            <div id="resRecs"></div>
+            <div style="margin-top:20px;display:flex;gap:10px;flex-wrap:wrap">
+              <button class="btn" onclick="saveDream()"><i class="fas fa-bookmark"></i>Save Dream</button>
+              <button class="btn btn-ghost" onclick="cancelAnalysis()"><i class="fas fa-redo"></i>Re-write</button>
+            </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- Library Page -->
-    <div class="page" id="page-library">
-      <p class="page-title">Dream Library</p>
-      <p class="page-sub">All your recorded dreams</p>
-      <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:6px">
-        <div class="search-bar" style="flex:1;min-width:200px"><i class="fas fa-search"></i><input id="searchInput" placeholder="Search dreams..." oninput="renderLibrary()"/></div>
-        <select id="genreFilter" onchange="renderLibrary()" style="width:140px;flex-shrink:0"><option value="">All Genres</option></select>
-        <select id="typeFilter" onchange="renderLibrary()" style="width:140px;flex-shrink:0">
-          <option value="">All Types</option><option>Normal</option><option>Lucid</option><option>Nightmare</option><option>Recurring</option>
-        </select>
-      </div>
-      <div class="dream-grid" id="dreamGrid"></div>
-    </div>
-
-    <!-- Calendar Page -->
-    <div class="page" id="page-calendar">
-      <p class="page-title">Dream Calendar</p>
-      <p class="page-sub">Visualise your dreaming journey through time</p>
-      <div class="card">
-        <div class="cal-nav">
-          <button class="btn btn-ghost btn-sm" onclick="calPrev()"><i class="fas fa-chevron-left"></i></button>
-          <h3 id="calTitle"></h3>
-          <button class="btn btn-ghost btn-sm" onclick="calNext()"><i class="fas fa-chevron-right"></i></button>
+      <!-- Library Page -->
+      <div class="page" id="page-library">
+        <p class="page-title">Dream Library</p>
+        <p class="page-sub">All your recorded dreams</p>
+        <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:6px">
+          <div class="search-bar" style="flex:1;min-width:200px"><i class="fas fa-search"></i><input id="searchInput"
+              placeholder="Search dreams..." oninput="renderLibrary()" /></div>
+          <select id="genreFilter" onchange="renderLibrary()" style="width:140px;flex-shrink:0">
+            <option value="">All Genres</option>
+          </select>
+          <select id="typeFilter" onchange="renderLibrary()" style="width:140px;flex-shrink:0">
+            <option value="">All Types</option>
+            <option>Normal</option>
+            <option>Lucid</option>
+            <option>Nightmare</option>
+            <option>Recurring</option>
+          </select>
         </div>
-        <div class="cal-grid">
-          <div class="cal-hdr">Sun</div><div class="cal-hdr">Mon</div><div class="cal-hdr">Tue</div>
-          <div class="cal-hdr">Wed</div><div class="cal-hdr">Thu</div><div class="cal-hdr">Fri</div><div class="cal-hdr">Sat</div>
-        </div>
-        <div class="cal-grid" id="calDays" style="margin-top:0"></div>
+        <div class="dream-grid" id="dreamGrid"></div>
       </div>
-    </div>
 
-  </main>
-</div>
+      <!-- Calendar Page -->
+      <div class="page" id="page-calendar">
+        <p class="page-title">Dream Calendar</p>
+        <p class="page-sub">Visualise your dreaming journey through time</p>
+        <div class="card">
+          <div class="cal-nav">
+            <button class="btn btn-ghost btn-sm" onclick="calPrev()"><i class="fas fa-chevron-left"></i></button>
+            <h3 id="calTitle"></h3>
+            <button class="btn btn-ghost btn-sm" onclick="calNext()"><i class="fas fa-chevron-right"></i></button>
+          </div>
+          <div class="cal-grid">
+            <div class="cal-hdr">Sun</div>
+            <div class="cal-hdr">Mon</div>
+            <div class="cal-hdr">Tue</div>
+            <div class="cal-hdr">Wed</div>
+            <div class="cal-hdr">Thu</div>
+            <div class="cal-hdr">Fri</div>
+            <div class="cal-hdr">Sat</div>
+          </div>
+          <div class="cal-grid" id="calDays" style="margin-top:0"></div>
+        </div>
+      </div>
 
-<!-- Dream Detail Modal -->
-<div class="modal-overlay" id="dreamModal">
-  <div class="modal">
-    <button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button>
-    <h2 id="mTitle"></h2>
-    <div class="meta-row" id="mMeta"></div>
-    <p class="dream-text" id="mText"></p>
-    <div class="keywords-row" id="mKeywords"></div>
-    <div id="mRecs"></div>
+    </main>
   </div>
-</div>
 
-<script>
-// ── Data ───────────────────────────────────────────────────────────────────────
-const KEY = 'somnium_v2';
-let dreams = JSON.parse(localStorage.getItem(KEY) || '[]');
-let pendingDream = null;
-let calYear, calMonth;
-{ const n = new Date(); calYear = n.getFullYear(); calMonth = n.getMonth(); }
+  <!-- Dream Detail Modal -->
+  <div class="modal-overlay" id="dreamModal">
+    <div class="modal">
+      <button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button>
+      <h2 id="mTitle"></h2>
+      <div class="meta-row" id="mMeta"></div>
+      <p class="dream-text" id="mText"></p>
+      <div class="keywords-row" id="mKeywords"></div>
+      <div id="mRecs"></div>
+    </div>
+  </div>
 
-function save() { localStorage.setItem(KEY, JSON.stringify(dreams)); }
+  <script>
+    // ── Config ─────────────────────────────────────────────────────────────────────
+    const API = 'http://localhost:5000/api';
+    const KEY = 'somnium_v2';
+    let dreams = JSON.parse(localStorage.getItem(KEY) || '[]');
+    let pendingDream = null;
+    let calYear, calMonth;
+    let useAPI = false;  // toggled after health check
+    { const n = new Date(); calYear = n.getFullYear(); calMonth = n.getMonth(); }
 
-// ── Stars ──────────────────────────────────────────────────────────────────────
-(function(){
-  const c = document.getElementById('stars'), ctx = c.getContext('2d');
-  let stars = [];
-  function resize(){ c.width = innerWidth; c.height = innerHeight; init(); }
-  function init(){
-    stars = [];
-    for(let i=0;i<180;i++) stars.push({x:Math.random()*c.width,y:Math.random()*c.height,r:Math.random()*1.4+.3,a:Math.random(),da:(Math.random()-.5)*.005});
-  }
-  function draw(){
-    ctx.clearRect(0,0,c.width,c.height);
-    stars.forEach(s=>{
-      s.a=Math.max(.05,Math.min(1,s.a+s.da));
-      if(s.a<=.05||s.a>=1) s.da=-s.da;
-      ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
-      ctx.fillStyle=`rgba(196,181,253,${s.a})`; ctx.fill();
+    function saveLocal() { localStorage.setItem(KEY, JSON.stringify(dreams)); }
+
+    // ── API status badge ───────────────────────────────────────────────────────────
+    function setStatus(online) {
+      useAPI = online;
+      const dot = document.getElementById('statusDot');
+      const lbl = document.getElementById('statusLabel');
+      if (online) {
+        dot.style.background = '#22c55e';
+        dot.style.boxShadow = '0 0 6px #22c55e';
+        lbl.textContent = '🟢 AI Mode';
+      } else {
+        dot.style.background = '#f59e0b';
+        dot.style.boxShadow = '0 0 6px #f59e0b';
+        lbl.textContent = '🟡 Offline';
+      }
+    }
+
+    async function checkHealth() {
+      try {
+        const r = await fetch(`${API}/health`, { signal: AbortSignal.timeout(1500) });
+        setStatus(r.ok);
+        if (r.ok) await syncFromAPI();  // pull persisted dreams from DB
+      } catch { setStatus(false); }
+    }
+
+    async function syncFromAPI() {
+      try {
+        const r = await fetch(`${API}/dreams`);
+        if (r.ok) {
+          dreams = await r.json();
+          saveLocal();
+          renderLibrary(); renderProfile(); renderCalendar();
+        }
+      } catch { }
+    }
+
+    // ── Stars ──────────────────────────────────────────────────────────────────────
+    (function () {
+      const c = document.getElementById('stars'), ctx = c.getContext('2d');
+      let stars = [];
+      function resize() { c.width = innerWidth; c.height = innerHeight; init(); }
+      function init() {
+        stars = [];
+        for (let i = 0; i < 180; i++) stars.push({ x: Math.random() * c.width, y: Math.random() * c.height, r: Math.random() * 1.4 + .3, a: Math.random(), da: (Math.random() - .5) * .005 });
+      }
+      function draw() {
+        ctx.clearRect(0, 0, c.width, c.height);
+        stars.forEach(s => {
+          s.a = Math.max(.05, Math.min(1, s.a + s.da));
+          if (s.a <= .05 || s.a >= 1) s.da = -s.da;
+          ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(196,181,253,${s.a})`; ctx.fill();
+        });
+        requestAnimationFrame(draw);
+      }
+      window.addEventListener('resize', resize); resize(); draw();
+    })();
+
+    // ── Nav ────────────────────────────────────────────────────────────────────────
+    document.querySelectorAll('.nav-item').forEach(el => {
+      el.addEventListener('click', () => {
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        el.classList.add('active');
+        const pg = document.getElementById('page-' + el.dataset.page);
+        pg.classList.add('active');
+        if (el.dataset.page === 'library') renderLibrary();
+        if (el.dataset.page === 'calendar') renderCalendar();
+        if (el.dataset.page === 'profile') renderProfile();
+        if (window.innerWidth <= 768) document.getElementById('sidebar').classList.remove('open');
+      });
     });
-    requestAnimationFrame(draw);
-  }
-  window.addEventListener('resize',resize); resize(); draw();
-})();
+    document.getElementById('menuBtn').addEventListener('click', () => {
+      document.getElementById('sidebar').classList.toggle('open');
+    });
 
-// ── Nav ────────────────────────────────────────────────────────────────────────
-document.querySelectorAll('.nav-item').forEach(el=>{
-  el.addEventListener('click',()=>{
-    document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-    el.classList.add('active');
-    const pg = document.getElementById('page-'+el.dataset.page);
-    pg.classList.add('active');
-    if(el.dataset.page==='library') renderLibrary();
-    if(el.dataset.page==='calendar') renderCalendar();
-    if(el.dataset.page==='profile') renderProfile();
-    if(window.innerWidth<=768) document.getElementById('sidebar').classList.remove('open');
-  });
-});
-document.getElementById('menuBtn').addEventListener('click',()=>{
-  document.getElementById('sidebar').classList.toggle('open');
-});
+    // ── Theme ──────────────────────────────────────────────────────────────────────
+    const themeBtn = document.getElementById('themeBtn');
+    function applyTheme(t) {
+      document.documentElement.setAttribute('data-theme', t);
+      themeBtn.innerHTML = t === 'dark' ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+      localStorage.setItem('som_theme', t);
+    }
+    themeBtn.addEventListener('click', () => applyTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'));
+    applyTheme(localStorage.getItem('som_theme') || 'dark');
 
-// ── Theme ──────────────────────────────────────────────────────────────────────
-const themeBtn = document.getElementById('themeBtn');
-function applyTheme(t){
-  document.documentElement.setAttribute('data-theme',t);
-  themeBtn.innerHTML = t==='dark'?'<i class="fas fa-sun"></i>':'<i class="fas fa-moon"></i>';
-  localStorage.setItem('som_theme',t);
-}
-themeBtn.addEventListener('click',()=>applyTheme(document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark'));
-applyTheme(localStorage.getItem('som_theme')||'dark');
+    // ── Init ───────────────────────────────────────────────────────────────────────
+    window.addEventListener('load', () => {
+      document.getElementById('dreamDate').value = new Date().toISOString().slice(0, 16);
+      const s = JSON.parse(localStorage.getItem('som_settings') || '{}');
+      if (s.name) { document.getElementById('settingName').value = s.name; document.getElementById('profileName').textContent = s.name; }
+      if (s.sleep) document.getElementById('settingSleep').value = s.sleep;
 
-// ── Init ───────────────────────────────────────────────────────────────────────
-window.addEventListener('load',()=>{
-  document.getElementById('dreamDate').value = new Date().toISOString().slice(0,16);
-  const s = JSON.parse(localStorage.getItem('som_settings')||'{}');
-  if(s.name){ document.getElementById('settingName').value=s.name; document.getElementById('profileName').textContent=s.name; }
-  if(s.sleep) document.getElementById('settingSleep').value=s.sleep;
+      // Mood/Type selectors
+      document.querySelectorAll('[data-mood]').forEach(t => t.addEventListener('click', function () {
+        document.querySelectorAll('[data-mood]').forEach(x => x.classList.remove('active'));
+        this.classList.add('active');
+      }));
+      document.querySelectorAll('[data-dtype]').forEach(t => t.addEventListener('click', function () {
+        document.querySelectorAll('[data-dtype]').forEach(x => x.classList.remove('active'));
+        this.classList.add('active');
+      }));
 
-  // Mood/Type selectors
-  document.querySelectorAll('[data-mood]').forEach(t=>t.addEventListener('click',function(){
-    document.querySelectorAll('[data-mood]').forEach(x=>x.classList.remove('active'));
-    this.classList.add('active');
-  }));
-  document.querySelectorAll('[data-dtype]').forEach(t=>t.addEventListener('click',function(){
-    document.querySelectorAll('[data-dtype]').forEach(x=>x.classList.remove('active'));
-    this.classList.add('active');
-  }));
+      populateGenreFilter();
+      renderProfile();
+      renderLibrary();
+      renderCalendar();
+      checkHealth();  // async: detect backend
+    });
 
-  populateGenreFilter();
-  renderProfile();
-  renderLibrary();
-  renderCalendar();
-});
+    // ── Genre Engine ───────────────────────────────────────────────────────────────
+    const GENRES = {
+      'Fantasy': ['dragon', 'magic', 'castle', 'wizard', 'fairy', 'elf', 'kingdom', 'sorcerer', 'spell', 'wand', 'unicorn', 'potion', 'enchant', 'realm', 'quest', 'paladin', 'mythical', 'flying horse', 'pixie', 'warlock'],
+      'Horror': ['ghost', 'monster', 'dark', 'fear', 'scream', 'terror', 'blood', 'shadow', 'chase', 'haunt', 'demon', 'evil', 'dead', 'zombie', 'vampire', 'death', 'sinister', 'creep', 'horror', 'knife'],
+      'Adventure': ['journey', 'quest', 'explore', 'travel', 'discover', 'mountain', 'ocean', 'island', 'ship', 'rescue', 'map', 'treasure', 'ruins', 'escape', 'cave', 'wilderness', 'expedition', 'climb'],
+      'Mystery': ['clue', 'puzzle', 'detective', 'secret', 'door', 'unknown', 'maze', 'investigate', 'suspect', 'crime', 'conspiracy', 'hidden', 'cipher', 'reveal', 'whisper', 'riddle'],
+      'Sci-Fi': ['space', 'robot', 'future', 'alien', 'technology', 'machine', 'planet', 'star', 'galaxy', 'laser', 'portal', 'dimension', 'spacecraft', 'android', 'teleport', 'cyberpunk', 'AI', 'neon'],
+      'Romance': ['love', 'kiss', 'wedding', 'heart', 'hug', 'date', 'passion', 'partner', 'beloved', 'embrace', 'tender', 'blush', 'rose', 'affection', 'longing', 'soulmate'],
+      'Thriller': ['spy', 'chase', 'secret agent', 'ambush', 'betrayal', 'weapon', 'sniper', 'government', 'conspiracy', 'undercover', 'escape', 'mission', 'assassin', 'explosive', 'run'],
+      'Surreal': ['flying', 'float', 'melt', 'impossible', 'giant', 'shrink', 'colour', 'rainbow', 'cloud', 'bizarre', 'nonsense', 'distort', 'morph', 'void', 'infinite', 'loop', 'dimension'],
+      'Spiritual': ['god', 'spirit', 'heaven', 'angel', 'soul', 'temple', 'meditation', 'divine', 'holy', 'karma', 'light', 'ascend', 'cosmos', 'prayer', 'enlighten', 'transcend', 'peace', 'sacred'],
+      'Comedy': ['funny', 'laugh', 'joke', 'clown', 'absurd', 'silly', 'ridiculous', 'prank', 'hilarious', 'comic', 'nonsense', 'giggle', 'slip', 'cartoon', 'party', 'celebration']
+    };
 
-// ── Genre Engine ───────────────────────────────────────────────────────────────
-const GENRES = {
-  'Fantasy':    ['dragon','magic','castle','wizard','fairy','elf','kingdom','sorcerer','spell','wand','unicorn','potion','enchant','realm','quest','paladin','mythical','flying horse','pixie','warlock'],
-  'Horror':     ['ghost','monster','dark','fear','scream','terror','blood','shadow','chase','haunt','demon','evil','dead','zombie','vampire','death','sinister','creep','horror','knife'],
-  'Adventure':  ['journey','quest','explore','travel','discover','mountain','ocean','island','ship','rescue','map','treasure','ruins','escape','cave','wilderness','expedition','climb'],
-  'Mystery':    ['clue','puzzle','detective','secret','door','unknown','maze','investigate','suspect','crime','conspiracy','hidden','cipher','reveal','whisper','riddle'],
-  'Sci-Fi':     ['space','robot','future','alien','technology','machine','planet','star','galaxy','laser','portal','dimension','spacecraft','android','teleport','cyberpunk','AI','neon'],
-  'Romance':    ['love','kiss','wedding','heart','hug','date','passion','partner','beloved','embrace','tender','blush','rose','affection','longing','soulmate'],
-  'Thriller':   ['spy','chase','secret agent','ambush','betrayal','weapon','sniper','government','conspiracy','undercover','escape','mission','assassin','explosive','run'],
-  'Surreal':    ['flying','float','melt','impossible','giant','shrink','colour','rainbow','cloud','bizarre','nonsense','distort','morph','void','infinite','loop','dimension'],
-  'Spiritual':  ['god','spirit','heaven','angel','soul','temple','meditation','divine','holy','karma','light','ascend','cosmos','prayer','enlighten','transcend','peace','sacred'],
-  'Comedy':     ['funny','laugh','joke','clown','absurd','silly','ridiculous','prank','hilarious','comic','nonsense','giggle','slip','cartoon','party','celebration']
-};
+    const GENRE_COLORS = {
+      'Fantasy': '#8b5cf6', 'Horror': '#ef4444', 'Adventure': '#f59e0b', 'Mystery': '#3b82f6',
+      'Sci-Fi': '#06b6d4', 'Romance': '#ec4899', 'Thriller': '#f97316', 'Surreal': '#a855f7',
+      'Spiritual': '#22c55e', 'Comedy': '#eab308'
+    };
 
-const GENRE_COLORS = {
-  'Fantasy':'#8b5cf6','Horror':'#ef4444','Adventure':'#f59e0b','Mystery':'#3b82f6',
-  'Sci-Fi':'#06b6d4','Romance':'#ec4899','Thriller':'#f97316','Surreal':'#a855f7',
-  'Spiritual':'#22c55e','Comedy':'#eab308'
-};
+    const RECS = {
+      'Fantasy': {
+        movies: [{ t: 'The Lord of the Rings', r: 'Epic quest through a mythical realm' },
+        { t: 'Pan\'s Labyrinth', r: 'Dark fairy tale blending reality and fantasy' },
+        { t: 'Spirited Away', r: 'Dreamlike journey through a spirit world' }],
+        tv: [{ t: 'Game of Thrones', r: 'Dragons, kingdoms, and epic battles' },
+        { t: 'The Witcher', r: 'Monster-hunter navigating a magical world' },
+        { t: 'Shadow and Bone', r: 'Magic systems and chosen-one destiny' }],
+        books: [{ t: 'The Name of the Wind', r: 'Patrick Rothfuss — a legendary magician\'s origin' },
+        { t: 'A Wizard of Earthsea', r: 'Ursula K. Le Guin — classic magical coming-of-age' },
+        { t: 'The Way of Kings', r: 'Brandon Sanderson — vast and intricate fantasy world' }]
+      },
+      'Horror': {
+        movies: [{ t: 'Hereditary', r: 'Deeply unsettling family horror with dread' },
+        { t: 'The Shining', r: 'Psychological horror in an isolated hotel' },
+        { t: 'A Quiet Place', r: 'Tension-filled survival against shadowy creatures' }],
+        tv: [{ t: 'The Haunting of Hill House', r: 'Terrifying family ghost story' },
+        { t: 'Midnight Mass', r: 'Slow-burn supernatural horror' },
+        { t: 'Stranger Things', r: 'Monsters from alternate dark dimensions' }],
+        books: [{ t: 'It', r: 'Stephen King — fear manifest as a shape-shifting evil' },
+        { t: 'House of Leaves', r: 'Mark Z. Danielewski — labyrinthine horror novel' },
+        { t: 'The Haunting of Hill House', r: 'Shirley Jackson — gothic psychological horror' }]
+      },
+      'Adventure': {
+        movies: [{ t: 'Indiana Jones', r: 'Action-packed archaeological adventure' },
+        { t: 'The Revenant', r: 'Survival journey through wilderness' },
+        { t: 'Jurassic Park', r: 'Thrilling island exploration gone wrong' }],
+        tv: [{ t: 'Lost', r: 'Survivors explore a mysterious island' },
+        { t: 'Into the Wild', r: 'Solo journey into the Alaskan wilderness' },
+        { t: 'Marco Polo', r: 'Epic adventures along the Silk Road' }],
+        books: [{ t: 'The Alchemist', r: 'Paulo Coelho — a boy\'s journey to find his destiny' },
+        { t: 'Life of Pi', r: 'Yann Martel — survival at sea with a Bengal tiger' },
+        { t: 'Treasure Island', r: 'Robert Louis Stevenson — classic pirate adventure' }]
+      },
+      'Mystery': {
+        movies: [{ t: 'Knives Out', r: 'Witty whodunit with clever twists' },
+        { t: 'Gone Girl', r: 'Psychological mystery about a missing wife' },
+        { t: 'Memento', r: 'Non-linear mystery told backwards' }],
+        tv: [{ t: 'True Detective', r: 'Atmospheric crime investigations' },
+        { t: 'The Fall', r: 'Cat-and-mouse detective thriller' },
+        { t: 'Broadchurch', r: 'Community unravels after a devastating crime' }],
+        books: [{ t: 'Gone Girl', r: 'Gillian Flynn — gripping domestic mystery thriller' },
+        { t: 'The Girl with the Dragon Tattoo', r: 'Stieg Larsson — cold Nordic crime investigation' },
+        { t: 'Big Little Lies', r: 'Liane Moriarty — secrets and murder in suburbia' }]
+      },
+      'Sci-Fi': {
+        movies: [{ t: 'Interstellar', r: 'Mind-bending space exploration and time' },
+        { t: 'Blade Runner 2049', r: 'Neo-noir AI and identity in the future' },
+        { t: 'Arrival', r: 'First contact with alien language and time' }],
+        tv: [{ t: 'Black Mirror', r: 'Anthology of near-future tech nightmares' },
+        { t: 'Dark', r: 'Time loops and mysteries spanning generations' },
+        { t: 'Westworld', r: 'AI consciousness in a futuristic theme park' }],
+        books: [{ t: 'Dune', r: 'Frank Herbert — politics and prophecy on a desert planet' },
+        { t: 'Neuromancer', r: 'William Gibson — the original cyberpunk novel' },
+        { t: 'The Hitchhiker\'s Guide to the Galaxy', r: 'Douglas Adams — absurdist space comedy' }]
+      },
+      'Romance': {
+        movies: [{ t: 'Eternal Sunshine of the Spotless Mind', r: 'Love, memory, and heartbreak' },
+        { t: 'Pride & Prejudice', r: 'Timeless romantic tension and wit' },
+        { t: 'Her', r: 'A man falls in love with an AI operating system' }],
+        tv: [{ t: 'Normal People', r: 'Intense, tender love story across years' },
+        { t: 'Bridgerton', r: 'Lavish Regency-era romantic drama' },
+        { t: 'Jane the Virgin', r: 'Melodramatic and heartfelt romantic comedy' }],
+        books: [{ t: 'Pride and Prejudice', r: 'Jane Austen — the classic of romantic wit' },
+        { t: 'The Notebook', r: 'Nicholas Sparks — epic enduring love story' },
+        { t: 'Outlander', r: 'Diana Gabaldon — romance across time and history' }]
+      },
+      'Thriller': {
+        movies: [{ t: 'No Country for Old Men', r: 'Cold and relentless cat-and-mouse thriller' },
+        { t: 'Sicario', r: 'Moral ambiguity in a cartel war' },
+        { t: 'The Bourne Identity', r: 'Amnesiac spy uncovering deadly secrets' }],
+        tv: [{ t: '24', r: 'Real-time counter-terrorism action' },
+        { t: 'Ozark', r: 'Money laundering under constant threat' },
+        { t: 'Mindhunter', r: 'FBI profilers interview serial killers' }],
+        books: [{ t: 'The Girl on the Train', r: 'Paula Hawkins — unreliable narrator thriller' },
+        { t: 'The Da Vinci Code', r: 'Dan Brown — secret society conspiracy chase' },
+        { t: 'I Am Pilgrim', r: 'Terry Hayes — globe-spanning spy thriller' }]
+      },
+      'Surreal': {
+        movies: [{ t: 'Mulholland Drive', r: 'David Lynch\'s dreamlike Hollywood mystery' },
+        { t: 'Being John Malkovich', r: 'Reality-bending absurdist comedy' },
+        { t: 'Donnie Darko', r: 'Time travel, giant rabbits and existential dread' }],
+        tv: [{ t: 'Twin Peaks', r: 'David Lynch\'s surreal small-town mystery' },
+        { t: 'Legion', r: 'Reality-warping mutant psychedelia' },
+        { t: 'The OA', r: 'Bizarre, moving interdimensional drama' }],
+        books: [{ t: 'The Trial', r: 'Franz Kafka — surreal bureaucratic nightmare' },
+        { t: 'Naked Lunch', r: 'William S. Burroughs — hallucinatory prose' },
+        { t: 'House of Leaves', r: 'Mark Z. Danielewski — reality-distorting horror novel' }]
+      },
+      'Spiritual': {
+        movies: [{ t: 'The Tree of Life', r: 'Terrence Malick\'s meditation on existence' },
+        { t: 'Cloud Atlas', r: 'Interconnected souls across multiple lifetimes' },
+        { t: 'Samsara', r: 'A visual journey through world cultures and spirituality' }],
+        tv: [{ t: 'The Good Place', r: 'Philosophical comedy about ethics and afterlife' },
+        { t: 'Touched by an Angel', r: 'Angels guiding humans through life\'s trials' },
+        { t: 'Sense8', r: 'Eight lives spiritually and emotionally connected' }],
+        books: [{ t: 'The Power of Now', r: 'Eckhart Tolle — presence and spiritual awakening' },
+        { t: 'Siddhartha', r: 'Hermann Hesse — a soul\'s journey to enlightenment' },
+        { t: 'The Celestine Prophecy', r: 'James Redfield — spiritual insight adventure' }]
+      },
+      'Comedy': {
+        movies: [{ t: 'The Grand Budapest Hotel', r: 'Whimsical, quirky, visually stunning comedy' },
+        { t: 'Superbad', r: 'Hilarious misadventure of teenage friends' },
+        { t: 'Groundhog Day', r: 'Absurd time loop with heart' }],
+        tv: [{ t: 'What We Do in the Shadows', r: 'Mockumentary about vampire flatmates' },
+        { t: 'Brooklyn Nine-Nine', r: 'Lovable police precinct comedy' },
+        { t: 'Arrested Development', r: 'Dense, layered dysfunctional family comedy' }],
+        books: [{ t: 'Good Omens', r: 'Pratchett & Gaiman — angels, demons and the apocalypse' },
+        { t: 'The Hitchhiker\'s Guide to the Galaxy', r: 'Douglas Adams — absurdist genius' },
+        { t: 'Catch-22', r: 'Joseph Heller — satirical WWII absurdity' }]
+      }
+    };
 
-const RECS = {
-  'Fantasy':{
-    movies:[{t:'The Lord of the Rings',r:'Epic quest through a mythical realm'},
-            {t:'Pan\'s Labyrinth',r:'Dark fairy tale blending reality and fantasy'},
-            {t:'Spirited Away',r:'Dreamlike journey through a spirit world'}],
-    tv:[{t:'Game of Thrones',r:'Dragons, kingdoms, and epic battles'},
-        {t:'The Witcher',r:'Monster-hunter navigating a magical world'},
-        {t:'Shadow and Bone',r:'Magic systems and chosen-one destiny'}],
-    books:[{t:'The Name of the Wind',r:'Patrick Rothfuss — a legendary magician\'s origin'},
-           {t:'A Wizard of Earthsea',r:'Ursula K. Le Guin — classic magical coming-of-age'},
-           {t:'The Way of Kings',r:'Brandon Sanderson — vast and intricate fantasy world'}]
-  },
-  'Horror':{
-    movies:[{t:'Hereditary',r:'Deeply unsettling family horror with dread'},
-            {t:'The Shining',r:'Psychological horror in an isolated hotel'},
-            {t:'A Quiet Place',r:'Tension-filled survival against shadowy creatures'}],
-    tv:[{t:'The Haunting of Hill House',r:'Terrifying family ghost story'},
-        {t:'Midnight Mass',r:'Slow-burn supernatural horror'},
-        {t:'Stranger Things',r:'Monsters from alternate dark dimensions'}],
-    books:[{t:'It',r:'Stephen King — fear manifest as a shape-shifting evil'},
-           {t:'House of Leaves',r:'Mark Z. Danielewski — labyrinthine horror novel'},
-           {t:'The Haunting of Hill House',r:'Shirley Jackson — gothic psychological horror'}]
-  },
-  'Adventure':{
-    movies:[{t:'Indiana Jones',r:'Action-packed archaeological adventure'},
-            {t:'The Revenant',r:'Survival journey through wilderness'},
-            {t:'Jurassic Park',r:'Thrilling island exploration gone wrong'}],
-    tv:[{t:'Lost',r:'Survivors explore a mysterious island'},
-        {t:'Into the Wild',r:'Solo journey into the Alaskan wilderness'},
-        {t:'Marco Polo',r:'Epic adventures along the Silk Road'}],
-    books:[{t:'The Alchemist',r:'Paulo Coelho — a boy\'s journey to find his destiny'},
-           {t:'Life of Pi',r:'Yann Martel — survival at sea with a Bengal tiger'},
-           {t:'Treasure Island',r:'Robert Louis Stevenson — classic pirate adventure'}]
-  },
-  'Mystery':{
-    movies:[{t:'Knives Out',r:'Witty whodunit with clever twists'},
-            {t:'Gone Girl',r:'Psychological mystery about a missing wife'},
-            {t:'Memento',r:'Non-linear mystery told backwards'}],
-    tv:[{t:'True Detective',r:'Atmospheric crime investigations'},
-        {t:'The Fall',r:'Cat-and-mouse detective thriller'},
-        {t:'Broadchurch',r:'Community unravels after a devastating crime'}],
-    books:[{t:'Gone Girl',r:'Gillian Flynn — gripping domestic mystery thriller'},
-           {t:'The Girl with the Dragon Tattoo',r:'Stieg Larsson — cold Nordic crime investigation'},
-           {t:'Big Little Lies',r:'Liane Moriarty — secrets and murder in suburbia'}]
-  },
-  'Sci-Fi':{
-    movies:[{t:'Interstellar',r:'Mind-bending space exploration and time'},
-            {t:'Blade Runner 2049',r:'Neo-noir AI and identity in the future'},
-            {t:'Arrival',r:'First contact with alien language and time'}],
-    tv:[{t:'Black Mirror',r:'Anthology of near-future tech nightmares'},
-        {t:'Dark',r:'Time loops and mysteries spanning generations'},
-        {t:'Westworld',r:'AI consciousness in a futuristic theme park'}],
-    books:[{t:'Dune',r:'Frank Herbert — politics and prophecy on a desert planet'},
-           {t:'Neuromancer',r:'William Gibson — the original cyberpunk novel'},
-           {t:'The Hitchhiker\'s Guide to the Galaxy',r:'Douglas Adams — absurdist space comedy'}]
-  },
-  'Romance':{
-    movies:[{t:'Eternal Sunshine of the Spotless Mind',r:'Love, memory, and heartbreak'},
-            {t:'Pride & Prejudice',r:'Timeless romantic tension and wit'},
-            {t:'Her',r:'A man falls in love with an AI operating system'}],
-    tv:[{t:'Normal People',r:'Intense, tender love story across years'},
-        {t:'Bridgerton',r:'Lavish Regency-era romantic drama'},
-        {t:'Jane the Virgin',r:'Melodramatic and heartfelt romantic comedy'}],
-    books:[{t:'Pride and Prejudice',r:'Jane Austen — the classic of romantic wit'},
-           {t:'The Notebook',r:'Nicholas Sparks — epic enduring love story'},
-           {t:'Outlander',r:'Diana Gabaldon — romance across time and history'}]
-  },
-  'Thriller':{
-    movies:[{t:'No Country for Old Men',r:'Cold and relentless cat-and-mouse thriller'},
-            {t:'Sicario',r:'Moral ambiguity in a cartel war'},
-            {t:'The Bourne Identity',r:'Amnesiac spy uncovering deadly secrets'}],
-    tv:[{t:'24',r:'Real-time counter-terrorism action'},
-        {t:'Ozark',r:'Money laundering under constant threat'},
-        {t:'Mindhunter',r:'FBI profilers interview serial killers'}],
-    books:[{t:'The Girl on the Train',r:'Paula Hawkins — unreliable narrator thriller'},
-           {t:'The Da Vinci Code',r:'Dan Brown — secret society conspiracy chase'},
-           {t:'I Am Pilgrim',r:'Terry Hayes — globe-spanning spy thriller'}]
-  },
-  'Surreal':{
-    movies:[{t:'Mulholland Drive',r:'David Lynch\'s dreamlike Hollywood mystery'},
-            {t:'Being John Malkovich',r:'Reality-bending absurdist comedy'},
-            {t:'Donnie Darko',r:'Time travel, giant rabbits and existential dread'}],
-    tv:[{t:'Twin Peaks',r:'David Lynch\'s surreal small-town mystery'},
-        {t:'Legion',r:'Reality-warping mutant psychedelia'},
-        {t:'The OA',r:'Bizarre, moving interdimensional drama'}],
-    books:[{t:'The Trial',r:'Franz Kafka — surreal bureaucratic nightmare'},
-           {t:'Naked Lunch',r:'William S. Burroughs — hallucinatory prose'},
-           {t:'House of Leaves',r:'Mark Z. Danielewski — reality-distorting horror novel'}]
-  },
-  'Spiritual':{
-    movies:[{t:'The Tree of Life',r:'Terrence Malick\'s meditation on existence'},
-            {t:'Cloud Atlas',r:'Interconnected souls across multiple lifetimes'},
-            {t:'Samsara',r:'A visual journey through world cultures and spirituality'}],
-    tv:[{t:'The Good Place',r:'Philosophical comedy about ethics and afterlife'},
-        {t:'Touched by an Angel',r:'Angels guiding humans through life\'s trials'},
-        {t:'Sense8',r:'Eight lives spiritually and emotionally connected'}],
-    books:[{t:'The Power of Now',r:'Eckhart Tolle — presence and spiritual awakening'},
-           {t:'Siddhartha',r:'Hermann Hesse — a soul\'s journey to enlightenment'},
-           {t:'The Celestine Prophecy',r:'James Redfield — spiritual insight adventure'}]
-  },
-  'Comedy':{
-    movies:[{t:'The Grand Budapest Hotel',r:'Whimsical, quirky, visually stunning comedy'},
-            {t:'Superbad',r:'Hilarious misadventure of teenage friends'},
-            {t:'Groundhog Day',r:'Absurd time loop with heart'}],
-    tv:[{t:'What We Do in the Shadows',r:'Mockumentary about vampire flatmates'},
-        {t:'Brooklyn Nine-Nine',r:'Lovable police precinct comedy'},
-        {t:'Arrested Development',r:'Dense, layered dysfunctional family comedy'}],
-    books:[{t:'Good Omens',r:'Pratchett & Gaiman — angels, demons and the apocalypse'},
-           {t:'The Hitchhiker\'s Guide to the Galaxy',r:'Douglas Adams — absurdist genius'},
-           {t:'Catch-22',r:'Joseph Heller — satirical WWII absurdity'}]
-  }
-};
+    function detectGenre(text) {
+      const t = text.toLowerCase();
+      const scores = {};
+      for (const g in GENRES) { scores[g] = 0; GENRES[g].forEach(k => { if (t.includes(k)) scores[g]++; }); }
+      let best = 'Surreal', max = 0;
+      for (const g in scores) if (scores[g] > max) { max = scores[g]; best = g; }
+      return best;
+    }
 
-function detectGenre(text){
-  const t = text.toLowerCase();
-  const scores = {};
-  for(const g in GENRES){ scores[g]=0; GENRES[g].forEach(k=>{ if(t.includes(k)) scores[g]++; }); }
-  let best='Surreal', max=0;
-  for(const g in scores) if(scores[g]>max){ max=scores[g]; best=g; }
-  return best;
-}
+    function extractKeywords(text) {
+      const t = text.toLowerCase();
+      const found = [];
+      for (const g in GENRES) GENRES[g].forEach(k => { if (t.includes(k) && !found.includes(k)) found.push(k); });
+      // also pick longer common nouns
+      const extra = text.match(/\b[A-Za-z]{5,}\b/g) || [];
+      extra.forEach(w => {
+        const wl = w.toLowerCase();
+        if (!['there', 'their', 'which', 'about', 'would', 'could', 'should', 'after', 'before', 'through', 'these', 'those', 'where', 'every', 'other', 'really', 'quite', 'maybe', 'still', 'being'].includes(wl) && !found.includes(wl)) found.push(wl);
+      });
+      return [...new Set(found)].slice(0, 12);
+    }
 
-function extractKeywords(text){
-  const t = text.toLowerCase();
-  const found = [];
-  for(const g in GENRES) GENRES[g].forEach(k=>{ if(t.includes(k)&&!found.includes(k)) found.push(k); });
-  // also pick longer common nouns
-  const extra = text.match(/\b[A-Za-z]{5,}\b/g)||[];
-  extra.forEach(w=>{
-    const wl=w.toLowerCase();
-    if(!['there','their','which','about','would','could','should','after','before','through','these','those','where','every','other','really','quite','maybe','still','being'].includes(wl)&&!found.includes(wl)) found.push(wl);
-  });
-  return [...new Set(found)].slice(0,12);
-}
+    function generateTitle(text, genre) {
+      const pfx = {
+        Fantasy: ['The Enchanted', 'A Realm of', 'Whispers of'], Horror: ['Shadows of', 'The Dark', 'Echoes of'],
+        Adventure: ['Beyond the', 'Journey to', 'The Quest for'], Mystery: ['Secrets of', 'The Hidden', 'Riddles of'],
+        'Sci-Fi': ['Signal from', 'Across the', 'The Last'], Romance: ['Hearts in', 'A Dream of', 'Where Love'],
+        Thriller: ['Run from', 'Behind the', 'No Way'], Surreal: ['Drifting Through', 'The Fluid', 'Lost in'],
+        Spiritual: ['Light of', 'The Sacred', 'Echoes of the'], Comedy: ['The Absurd', 'Much Ado About', 'Laughing Through']
+      };
+      const words = text.match(/\b[A-Z][a-z]{3,}\b/g) || [];
+      const noun = words.length ? words[Math.floor(Math.random() * words.length)] : 'the Unknown';
+      const p = (pfx[genre] || pfx.Surreal);
+      return p[Math.floor(Math.random() * p.length)] + ' ' + noun;
+    }
 
-function generateTitle(text, genre){
-  const pfx={
-    Fantasy:['The Enchanted','A Realm of','Whispers of'],Horror:['Shadows of','The Dark','Echoes of'],
-    Adventure:['Beyond the','Journey to','The Quest for'],Mystery:['Secrets of','The Hidden','Riddles of'],
-    'Sci-Fi':['Signal from','Across the','The Last'],Romance:['Hearts in','A Dream of','Where Love'],
-    Thriller:['Run from','Behind the','No Way'],Surreal:['Drifting Through','The Fluid','Lost in'],
-    Spiritual:['Light of','The Sacred','Echoes of the'],Comedy:['The Absurd','Much Ado About','Laughing Through']
-  };
-  const words=text.match(/\b[A-Z][a-z]{3,}\b/g)||[];
-  const noun = words.length ? words[Math.floor(Math.random()*words.length)] : 'the Unknown';
-  const p = (pfx[genre]||pfx.Surreal);
-  return p[Math.floor(Math.random()*p.length)] + ' ' + noun;
-}
+    function fixGrammar(text) {
+      return text.replace(/\bi\b/g, 'I').replace(/\.(\S)/g, '. $1').replace(/\s{2,}/g, ' ').trim().replace(/^./, c => c.toUpperCase()).replace(/([^.!?])$/, '$1.');
+    }
 
-function fixGrammar(text){
-  return text.replace(/\bi\b/g,'I').replace(/\.(\S)/g,'. $1').replace(/\s{2,}/g,' ').trim().replace(/^./,c=>c.toUpperCase()).replace(/([^.!?])$/,'$1.');
-}
-
-function buildRecHTML(genre){
-  const r=RECS[genre]||RECS['Surreal'];
-  const icons={movies:'🎬',tv:'📺',books:'📚'};
-  const labels={movies:'Movies',tv:'TV Series',books:'Books'};
-  return ['movies','tv','books'].map(cat=>`
+    function buildRecHTML(genre) {
+      const r = RECS[genre] || RECS['Surreal'];
+      const icons = { movies: '🎬', tv: '📺', books: '📚' };
+      const labels = { movies: 'Movies', tv: 'TV Series', books: 'Books' };
+      return ['movies', 'tv', 'books'].map(cat => `
     <div class="rec-section">
       <h4>${icons[cat]} ${labels[cat]}</h4>
-      <div class="rec-list">${r[cat].map(i=>`
+      <div class="rec-list">${r[cat].map(i => `
         <div class="rec-item"><span class="rec-icon">${icons[cat]}</span>
           <div class="rec-info"><strong>${i.t}</strong><span>${i.r}</span></div>
         </div>`).join('')}
       </div>
     </div>`).join('');
-}
+    }
 
-function genreBadge(g){
-  const c=GENRE_COLORS[g]||'#8b5cf6';
-  return `<span class="genre-badge" style="background:${c}">${g}</span>`;
-}
+    function genreBadge(g) {
+      const c = GENRE_COLORS[g] || '#8b5cf6';
+      return `<span class="genre-badge" style="background:${c}">${g}</span>`;
+    }
 
-// ── Analyze ────────────────────────────────────────────────────────────────────
-function analyzeDream(){
-  const text=document.getElementById('dreamText').value.trim();
-  if(!text){ alert('Please describe your dream first!'); return; }
-  const mood = (document.querySelector('[data-mood].active')||{}).dataset?.mood||'';
-  const dtype = (document.querySelector('[data-dtype].active')||{}).dataset?.dtype||'Normal';
-  const date = document.getElementById('dreamDate').value;
+    // ── Analyze (API-first, JS fallback) ────────────────────────────────────────
+    async function analyzeDream() {
+      const text = document.getElementById('dreamText').value.trim();
+      if (!text) { alert('Please describe your dream first!'); return; }
+      const mood = (document.querySelector('[data-mood].active') || {}).dataset?.mood || '';
+      const dtype = (document.querySelector('[data-dtype].active') || {}).dataset?.dtype || 'Normal';
+      const date = document.getElementById('dreamDate').value;
 
-  document.getElementById('analyzeBtn').innerHTML='<span class="spinner"></span> Analysing...';
-  document.getElementById('analyzeBtn').disabled=true;
+      const btn = document.getElementById('analyzeBtn');
+      btn.innerHTML = '<span class="spinner"></span> Analysing...';
+      btn.disabled = true;
 
-  setTimeout(()=>{
-    const genre = detectGenre(text);
-    const keywords = extractKeywords(text);
-    const title = generateTitle(text, genre);
-    const fixed = fixGrammar(text);
-    const color = GENRE_COLORS[genre]||'#8b5cf6';
+      let title, genre, fixed, keywords, entities = [], confidence = null;
 
-    pendingDream = {id:Date.now(),date,text:fixed,title,genre,mood,type:dtype,keywords};
+      if (useAPI) {
+        try {
+          const r = await fetch(`${API}/analyze`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ text })
+          });
+          if (r.ok) {
+            const d = await r.json();
+            title = d.title;
+            genre = d.genre;
+            fixed = d.fixed_text;
+            keywords = d.keywords;
+            entities = d.entities || [];
+            confidence = d.confidence;
+          }
+        } catch (e) { console.warn('API analyze failed, falling back to JS', e); }
+      }
 
-    document.getElementById('resTitle').textContent=title;
-    document.getElementById('resGenre').innerHTML=`<span class="genre-badge" style="background:${color}">${genre}</span>`;
-    document.getElementById('resMood').textContent=mood?`😶 ${mood}`:'No mood';
-    document.getElementById('resType').textContent=dtype;
-    document.getElementById('resText').textContent=fixed;
-    document.getElementById('resKeywords').innerHTML=keywords.map(k=>`<span class="chip chip-primary">${k}</span>`).join('');
-    document.getElementById('resRecs').innerHTML=buildRecHTML(genre);
-    document.getElementById('analysisResult').style.display='block';
-    document.getElementById('analyzeBtn').innerHTML='<i class="fas fa-magic"></i>Analyze &amp; Preview';
-    document.getElementById('analyzeBtn').disabled=false;
-    document.getElementById('analysisResult').scrollIntoView({behavior:'smooth',block:'start'});
-  },1200);
-}
+      // JS fallback
+      if (!genre) {
+        fixed = fixGrammar(text);
+        genre = detectGenre(text);
+        keywords = extractKeywords(text);
+        title = generateTitle(text, genre);
+      }
 
-function saveDream(){
-  if(!pendingDream) return;
-  dreams.unshift(pendingDream);
-  save();
-  pendingDream=null;
-  document.getElementById('dreamText').value='';
-  document.getElementById('analysisResult').style.display='none';
-  document.querySelectorAll('[data-mood]').forEach(x=>x.classList.remove('active'));
-  document.querySelectorAll('[data-dtype]').forEach(x=>x.classList.remove('active'));
-  document.querySelector('[data-dtype="Normal"]').classList.add('active');
-  document.getElementById('dreamDate').value=new Date().toISOString().slice(0,16);
-  populateGenreFilter();
-  // Switch to library
-  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.querySelector('[data-page="library"]').classList.add('active');
-  document.getElementById('page-library').classList.add('active');
-  renderLibrary(); renderProfile();
-}
+      const color = GENRE_COLORS[genre] || '#8b5cf6';
+      pendingDream = { id: Date.now(), date, text: fixed, title, genre, mood, type: dtype, keywords, entities, confidence };
 
-function cancelAnalysis(){
-  document.getElementById('analysisResult').style.display='none';
-  pendingDream=null;
-}
+      document.getElementById('resTitle').textContent = title;
+      document.getElementById('resGenre').innerHTML = `<span class="genre-badge" style="background:${color}">${genre}</span>${confidence !== null ? `<span class="chip chip-muted" style="font-size:.7rem">🎯 ${Math.round(confidence * 100)}% confident</span>` : ''}`;
+      document.getElementById('resMood').textContent = mood ? `😶 ${mood}` : 'No mood';
+      document.getElementById('resType').textContent = dtype;
+      document.getElementById('resText').textContent = fixed;
+      const kwHTML = keywords.map(k => `<span class="chip chip-primary">${k}</span>`).join('');
+      const entHTML = entities.length ? entities.slice(0, 5).map(e => `<span class="chip chip-muted" title="${e.label}">${e.text}</span>`).join('') : '';
+      document.getElementById('resKeywords').innerHTML = kwHTML + (entHTML ? '<span class="chip chip-muted" style="opacity:.5">|</span>' + entHTML : '');
+      document.getElementById('resRecs').innerHTML = buildRecHTML(genre);
+      document.getElementById('analysisResult').style.display = 'block';
+      btn.innerHTML = '<i class="fas fa-magic"></i>Analyze &amp; Preview';
+      btn.disabled = false;
+      document.getElementById('analysisResult').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
 
-// ── Library ────────────────────────────────────────────────────────────────────
-function populateGenreFilter(){
-  const sel=document.getElementById('genreFilter');
-  const genres=[...new Set(dreams.map(d=>d.genre))].sort();
-  const cur=sel.value;
-  sel.innerHTML='<option value="">All Genres</option>'+genres.map(g=>`<option ${g===cur?'selected':''}>${g}</option>`).join('');
-}
+    async function saveDream() {
+      if (!pendingDream) return;
+      if (useAPI) {
+        try {
+          const r = await fetch(`${API}/dreams`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(pendingDream)
+          });
+          if (r.ok) {
+            const saved = await r.json();
+            // Use DB id so deletion works correctly
+            pendingDream = { ...pendingDream, id: saved.id };
+          }
+        } catch (e) { console.warn('API save failed, saving to localStorage', e); }
+      }
+      dreams.unshift(pendingDream);
+      saveLocal();
+      pendingDream = null;
+      document.getElementById('dreamText').value = '';
+      document.getElementById('analysisResult').style.display = 'none';
+      document.querySelectorAll('[data-mood]').forEach(x => x.classList.remove('active'));
+      document.querySelectorAll('[data-dtype]').forEach(x => x.classList.remove('active'));
+      document.querySelector('[data-dtype="Normal"]').classList.add('active');
+      document.getElementById('dreamDate').value = new Date().toISOString().slice(0, 16);
+      populateGenreFilter();
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.querySelector('[data-page="library"]').classList.add('active');
+      document.getElementById('page-library').classList.add('active');
+      renderLibrary(); renderProfile();
+    }
 
-function renderLibrary(){
-  const q=(document.getElementById('searchInput').value||'').toLowerCase();
-  const gf=document.getElementById('genreFilter').value;
-  const tf=document.getElementById('typeFilter').value;
-  let list=dreams.filter(d=>{
-    if(gf&&d.genre!==gf) return false;
-    if(tf&&d.type!==tf) return false;
-    if(q&&!(d.title+d.text+d.genre+(d.keywords||[]).join(' ')).toLowerCase().includes(q)) return false;
-    return true;
-  });
-  const grid=document.getElementById('dreamGrid');
-  if(list.length===0){
-    grid.innerHTML=`<div class="empty-state" style="grid-column:1/-1"><i class="fas fa-moon"></i><p>${dreams.length===0?'No dreams yet. Log your first dream!':'No dreams match your search.'}</p></div>`;
-    return;
-  }
-  grid.innerHTML=list.map(d=>{
-    const c=GENRE_COLORS[d.genre]||'#8b5cf6';
-    const preview=d.text.length>110?d.text.slice(0,110)+'…':d.text;
-    const tags=(d.keywords||[]).slice(0,4).map(k=>`<span class="chip chip-muted" style="font-size:.68rem">${k}</span>`).join('');
-    return `<div class="dream-card" onclick="openModal('${d.id}')">
+    function cancelAnalysis() {
+      document.getElementById('analysisResult').style.display = 'none';
+      pendingDream = null;
+    }
+
+    // ── Library ────────────────────────────────────────────────────────────────────
+    function populateGenreFilter() {
+      const sel = document.getElementById('genreFilter');
+      const genres = [...new Set(dreams.map(d => d.genre))].sort();
+      const cur = sel.value;
+      sel.innerHTML = '<option value="">All Genres</option>' + genres.map(g => `<option ${g === cur ? 'selected' : ''}>${g}</option>`).join('');
+    }
+
+    function renderLibrary() {
+      const q = (document.getElementById('searchInput').value || '').toLowerCase();
+      const gf = document.getElementById('genreFilter').value;
+      const tf = document.getElementById('typeFilter').value;
+      let list = dreams.filter(d => {
+        if (gf && d.genre !== gf) return false;
+        if (tf && d.type !== tf) return false;
+        if (q && !(d.title + d.text + d.genre + (d.keywords || []).join(' ')).toLowerCase().includes(q)) return false;
+        return true;
+      });
+      const grid = document.getElementById('dreamGrid');
+      if (list.length === 0) {
+        grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><i class="fas fa-moon"></i><p>${dreams.length === 0 ? 'No dreams yet. Log your first dream!' : 'No dreams match your search.'}</p></div>`;
+        return;
+      }
+      grid.innerHTML = list.map(d => {
+        const c = GENRE_COLORS[d.genre] || '#8b5cf6';
+        const preview = d.text.length > 110 ? d.text.slice(0, 110) + '…' : d.text;
+        const tags = (d.keywords || []).slice(0, 4).map(k => `<span class="chip chip-muted" style="font-size:.68rem">${k}</span>`).join('');
+        return `<div class="dream-card" onclick="openModal('${d.id}')">
       <button class="del-btn" onclick="deleteDream(event,'${d.id}')"><i class="fas fa-trash"></i></button>
       <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
         <span class="genre-badge" style="background:${c}">${d.genre}</span>
-        <span class="chip chip-muted" style="font-size:.68rem">${d.type||'Normal'}</span>
+        <span class="chip chip-muted" style="font-size:.68rem">${d.type || 'Normal'}</span>
       </div>
       <h4>${d.title}</h4>
       <p>${preview}</p>
       <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:4px">${tags}</div>
-      <div class="meta"><span><i class="fas fa-calendar" style="margin-right:4px"></i>${new Date(d.date).toLocaleDateString()}</span><span>${d.mood?'😶 '+d.mood:''}</span></div>
+      <div class="meta"><span><i class="fas fa-calendar" style="margin-right:4px"></i>${new Date(d.date).toLocaleDateString()}</span><span>${d.mood ? '😶 ' + d.mood : ''}</span></div>
     </div>`;
-  }).join('');
-}
+      }).join('');
+    }
 
-function deleteDream(e, id){
-  e.stopPropagation();
-  if(!confirm('Delete this dream?')) return;
-  dreams=dreams.filter(d=>String(d.id)!==String(id));
-  save(); populateGenreFilter(); renderLibrary(); renderProfile();
-}
+    async function deleteDream(e, id) {
+      e.stopPropagation();
+      if (!confirm('Delete this dream?')) return;
+      if (useAPI) {
+        try { await fetch(`${API}/dreams/${id}`, { method: 'DELETE' }); } catch (err) { }
+      }
+      dreams = dreams.filter(d => String(d.id) !== String(id));
+      saveLocal(); populateGenreFilter(); renderLibrary(); renderProfile();
+    }
 
-// ── Modal ─────────────────────────────────────────────────────────────────────
-function openModal(id){
-  const d=dreams.find(x=>String(x.id)===String(id));
-  if(!d) return;
-  const c=GENRE_COLORS[d.genre]||'#8b5cf6';
-  document.getElementById('mTitle').textContent=d.title;
-  document.getElementById('mMeta').innerHTML=`<span class="genre-badge" style="background:${c}">${d.genre}</span><span class="chip chip-muted">${d.type||'Normal'}</span>${d.mood?`<span class="chip chip-muted">😶 ${d.mood}</span>`:''}<span class="chip chip-muted"><i class="fas fa-calendar" style="margin-right:4px"></i>${new Date(d.date).toLocaleDateString()}</span>`;
-  document.getElementById('mText').textContent=d.text;
-  document.getElementById('mKeywords').innerHTML=(d.keywords||[]).map(k=>`<span class="chip chip-primary">${k}</span>`).join('');
-  document.getElementById('mRecs').innerHTML=buildRecHTML(d.genre);
-  document.getElementById('dreamModal').classList.add('open');
-}
-function closeModal(){ document.getElementById('dreamModal').classList.remove('open'); }
-document.getElementById('dreamModal').addEventListener('click',e=>{ if(e.target===document.getElementById('dreamModal')) closeModal(); });
+    // ── Modal ─────────────────────────────────────────────────────────────────────
+    function openModal(id) {
+      const d = dreams.find(x => String(x.id) === String(id));
+      if (!d) return;
+      const c = GENRE_COLORS[d.genre] || '#8b5cf6';
+      document.getElementById('mTitle').textContent = d.title;
+      document.getElementById('mMeta').innerHTML = `<span class="genre-badge" style="background:${c}">${d.genre}</span><span class="chip chip-muted">${d.type || 'Normal'}</span>${d.mood ? `<span class="chip chip-muted">😶 ${d.mood}</span>` : ''}<span class="chip chip-muted"><i class="fas fa-calendar" style="margin-right:4px"></i>${new Date(d.date).toLocaleDateString()}</span>`;
+      document.getElementById('mText').textContent = d.text;
+      document.getElementById('mKeywords').innerHTML = (d.keywords || []).map(k => `<span class="chip chip-primary">${k}</span>`).join('');
+      document.getElementById('mRecs').innerHTML = buildRecHTML(d.genre);
+      document.getElementById('dreamModal').classList.add('open');
+    }
+    function closeModal() { document.getElementById('dreamModal').classList.remove('open'); }
+    document.getElementById('dreamModal').addEventListener('click', e => { if (e.target === document.getElementById('dreamModal')) closeModal(); });
 
-// ── Calendar ───────────────────────────────────────────────────────────────────
-function renderCalendar(){
-  const months=['January','February','March','April','May','June','July','August','September','October','November','December'];
-  document.getElementById('calTitle').textContent=`${months[calMonth]} ${calYear}`;
-  const today=new Date(); const grid=document.getElementById('calDays');
-  const first=new Date(calYear,calMonth,1).getDay();
-  const last=new Date(calYear,calMonth+1,0).getDate();
-  let html='';
-  for(let i=0;i<first;i++) html+=`<div></div>`;
-  for(let d=1;d<=last;d++){
-    const ds=dreams.filter(dr=>{const dd=new Date(dr.date);return dd.getDate()===d&&dd.getMonth()===calMonth&&dd.getFullYear()===calYear;});
-    const isToday=d===today.getDate()&&calMonth===today.getMonth()&&calYear===today.getFullYear();
-    const cls=`cal-day${ds.length?' has-dream':''}${isToday?' today':''}`;
-    const dot=ds.length?`<div class="cal-dot"></div>`:'';
-    const click=ds.length?`onclick="calDayClick(${d})"`:''
-    html+=`<div class="${cls}" ${click}>${d}${dot}</div>`;
-  }
-  grid.innerHTML=html;
-}
-function calPrev(){ calMonth--; if(calMonth<0){calMonth=11;calYear--;} renderCalendar(); }
-function calNext(){ calMonth++; if(calMonth>11){calMonth=0;calYear++;} renderCalendar(); }
-function calDayClick(d){
-  // Switch to library filtered to this date
-  document.getElementById('searchInput').value=new Date(calYear,calMonth,d).toLocaleDateString();
-  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.querySelector('[data-page="library"]').classList.add('active');
-  document.getElementById('page-library').classList.add('active');
-  renderLibrary();
-}
+    // ── Calendar ───────────────────────────────────────────────────────────────────
+    function renderCalendar() {
+      const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+      document.getElementById('calTitle').textContent = `${months[calMonth]} ${calYear}`;
+      const today = new Date(); const grid = document.getElementById('calDays');
+      const first = new Date(calYear, calMonth, 1).getDay();
+      const last = new Date(calYear, calMonth + 1, 0).getDate();
+      let html = '';
+      for (let i = 0; i < first; i++) html += `<div></div>`;
+      for (let d = 1; d <= last; d++) {
+        const ds = dreams.filter(dr => { const dd = new Date(dr.date); return dd.getDate() === d && dd.getMonth() === calMonth && dd.getFullYear() === calYear; });
+        const isToday = d === today.getDate() && calMonth === today.getMonth() && calYear === today.getFullYear();
+        const cls = `cal-day${ds.length ? ' has-dream' : ''}${isToday ? ' today' : ''}`;
+        const dot = ds.length ? `<div class="cal-dot"></div>` : '';
+        const click = ds.length ? `onclick="calDayClick(${d})"` : ''
+        html += `<div class="${cls}" ${click}>${d}${dot}</div>`;
+      }
+      grid.innerHTML = html;
+    }
+    function calPrev() { calMonth--; if (calMonth < 0) { calMonth = 11; calYear--; } renderCalendar(); }
+    function calNext() { calMonth++; if (calMonth > 11) { calMonth = 0; calYear++; } renderCalendar(); }
+    function calDayClick(d) {
+      // Switch to library filtered to this date
+      document.getElementById('searchInput').value = new Date(calYear, calMonth, d).toLocaleDateString();
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.querySelector('[data-page="library"]').classList.add('active');
+      document.getElementById('page-library').classList.add('active');
+      renderLibrary();
+    }
 
-// ── Profile ────────────────────────────────────────────────────────────────────
-function renderProfile(){
-  document.getElementById('statTotal').textContent=dreams.length;
-  document.getElementById('statLucid').textContent=dreams.filter(d=>d.type==='Lucid').length;
-  document.getElementById('statStreak').textContent=calcStreak();
-  // Genre chart
-  const counts={};
-  dreams.forEach(d=>counts[d.genre]=(counts[d.genre]||0)+1);
-  const sorted=Object.entries(counts).sort((a,b)=>b[1]-a[1]);
-  const max=sorted[0]?sorted[0][1]:1;
-  const chart=document.getElementById('genreChart');
-  if(sorted.length===0){ chart.innerHTML='<p style="color:var(--muted);font-size:.85rem">Log dreams to see your genre breakdown.</p>'; return; }
-  chart.innerHTML=sorted.map(([g,n])=>`
+    // ── Profile ────────────────────────────────────────────────────────────────────
+    function renderProfile() {
+      document.getElementById('statTotal').textContent = dreams.length;
+      document.getElementById('statLucid').textContent = dreams.filter(d => d.type === 'Lucid').length;
+      document.getElementById('statStreak').textContent = calcStreak();
+      // Genre chart
+      const counts = {};
+      dreams.forEach(d => counts[d.genre] = (counts[d.genre] || 0) + 1);
+      const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+      const max = sorted[0] ? sorted[0][1] : 1;
+      const chart = document.getElementById('genreChart');
+      if (sorted.length === 0) { chart.innerHTML = '<p style="color:var(--muted);font-size:.85rem">Log dreams to see your genre breakdown.</p>'; return; }
+      chart.innerHTML = sorted.map(([g, n]) => `
     <div class="genre-bar-row">
       <span class="genre-bar-label">${g}</span>
-      <div class="genre-bar-track"><div class="genre-bar-fill" style="width:${(n/max)*100}%;background:${GENRE_COLORS[g]||'#8b5cf6'}"></div></div>
+      <div class="genre-bar-track"><div class="genre-bar-fill" style="width:${(n / max) * 100}%;background:${GENRE_COLORS[g] || '#8b5cf6'}"></div></div>
       <span class="genre-bar-count">${n}</span>
     </div>`).join('');
-}
+    }
 
-function calcStreak(){
-  if(!dreams.length) return 0;
-  const dates=[...new Set(dreams.map(d=>new Date(d.date).toDateString()))].map(s=>new Date(s)).sort((a,b)=>b-a);
-  let streak=1, today=new Date(); today.setHours(0,0,0,0);
-  if(dates[0].toDateString()!==today.toDateString()&&dates[0].toDateString()!==new Date(today-864e5).toDateString()) return 0;
-  for(let i=1;i<dates.length;i++){
-    const diff=(dates[i-1]-dates[i])/(864e5);
-    if(Math.round(diff)===1) streak++; else break;
-  }
-  return streak;
-}
+    function calcStreak() {
+      if (!dreams.length) return 0;
+      const dates = [...new Set(dreams.map(d => new Date(d.date).toDateString()))].map(s => new Date(s)).sort((a, b) => b - a);
+      let streak = 1, today = new Date(); today.setHours(0, 0, 0, 0);
+      if (dates[0].toDateString() !== today.toDateString() && dates[0].toDateString() !== new Date(today - 864e5).toDateString()) return 0;
+      for (let i = 1; i < dates.length; i++) {
+        const diff = (dates[i - 1] - dates[i]) / (864e5);
+        if (Math.round(diff) === 1) streak++; else break;
+      }
+      return streak;
+    }
 
-function saveSettings(){
-  const name=document.getElementById('settingName').value;
-  const sleep=document.getElementById('settingSleep').value;
-  localStorage.setItem('som_settings',JSON.stringify({name,sleep}));
-  document.getElementById('profileName').textContent=name||'Dreamer';
-  document.getElementById('profileSub').innerHTML=`<i class="fas fa-moon"></i> ${sleep||'Dream Explorer'}`;
-}
-</script>
+    function saveSettings() {
+      const name = document.getElementById('settingName').value;
+      const sleep = document.getElementById('settingSleep').value;
+      localStorage.setItem('som_settings', JSON.stringify({ name, sleep }));
+      document.getElementById('profileName').textContent = name || 'Dreamer';
+      document.getElementById('profileSub').innerHTML = `<i class="fas fa-moon"></i> ${sleep || 'Dream Explorer'}`;
+    }
+  </script>
 </body>
+
 </html>
