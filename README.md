@@ -39,29 +39,6 @@ Each dream entry is processed through a text analysis pipeline that identifies k
 
 ---
 
-## Getting Started
-
-Clone the repository and install dependencies:
-
-```bash
-git clone https://github.com/Abhishek2993/somnium.git
-cd somnium/backend
-pip install -r requirements.txt
-```
-
-Run the application (one command):
-
-```bash
-bash start.sh
-```
-
-Or manually:
-
-```bash
-python app.py
-```
-
-Open your browser at `http://localhost:5000`
 
 ---
 
