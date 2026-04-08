@@ -131,3 +131,9 @@ dist
 
 # Replit debugger
 .breakpoints
+__pycache__/
+*.pyc
+*.pkl
+.DS_Store
+.firebase/
+venv/
