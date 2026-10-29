@@ -141,6 +141,7 @@ venv/
 .env
 data/raw/
 data/*.db
+data/gold_template.csv
 models/*.joblib
 models/*.pt
 reports/

@@ -59,6 +59,26 @@ IDs, no text) are committed to git. Raw collected text lives only in the
 local, gitignored `somnium.db` — see the root `.gitignore`
 (`data/raw/`, `data/*.db`).
 
+## Weak labels and the gold set
+
+`weak_labels.py` derives two boolean flags per Reddit post from its
+subreddit/flair alone: `weak_lucid`, `weak_nightmare`. These are a cheap,
+noisy bootstrap signal (a poster's own categorization, not an independent
+judgment) and are **not** used for any reported metric.
+
+`make_gold_template.py` deterministically samples up to 200 collected
+dreams (seed 42, reddit_dreams + dreambank_dreams combined) into
+`data/gold_template.csv` for hand labeling (`gold_genre`,
+`gold_lucid`, `gold_nightmare`, `gold_notes` columns, left blank).
+**All metrics reported anywhere in this project are computed only on
+this hand-labeled gold set** — never on the weak labels. `gold_template.csv`
+is gitignored (it contains raw post text, same as the rest of the raw
+corpus) — it's a local working file for whoever does the labeling.
+
+As of this commit, 0 dreams have been collected, so running
+`make_gold_template.py` produces a 0-row (header-only) CSV. Re-run it
+after `collect_reddit.py` has actually populated `reddit_dreams`.
+
 ## Known limitations
 
 - **Reddit listing cap.** `subreddit.new()` / `subreddit.top()` only
