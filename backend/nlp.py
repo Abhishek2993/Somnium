@@ -84,23 +84,27 @@ def get_named_entities(text: str) -> list[dict]:
     return entities
 
 
+# Title prefixes per genre, used by generate_title(). Module-level so new
+# genres (see ml.GENRES) can extend this dict directly.
+GENRE_PREFIXES = {
+    'Fantasy':   ['The Enchanted', 'A Realm of', 'Whispers of', 'Beyond the'],
+    'Horror':    ['Shadows of', 'The Dark', 'Echoes of', 'Fear in'],
+    'Adventure': ['Beyond the', 'Journey to', 'The Quest for', 'Lost in'],
+    'Mystery':   ['Secrets of', 'The Hidden', 'Riddles of', "The Unknown"],
+    'Sci-Fi':    ['Signal from', 'Across the', 'The Last', 'Echoes of'],
+    'Romance':   ['Hearts in', 'A Dream of', 'Where Love', 'Longing for'],
+    'Thriller':  ['Run from', 'Behind the', 'No Escape from', 'Chasing'],
+    'Surreal':   ['Drifting Through', 'The Fluid', 'Lost in', 'Falling into'],
+    'Spiritual': ['Light of', 'The Sacred', 'Echoes of the', 'Journey to'],
+    'Comedy':    ['The Absurd', 'Much Ado About', 'Laughing Through', 'The Bizarre'],
+}
+
+
 def generate_title(text: str, genre: str) -> str:
     """Generate an evocative dream title using spaCy + genre prefix."""
-    prefixes = {
-        'Fantasy':   ['The Enchanted', 'A Realm of', 'Whispers of', 'Beyond the'],
-        'Horror':    ['Shadows of', 'The Dark', 'Echoes of', 'Fear in'],
-        'Adventure': ['Beyond the', 'Journey to', 'The Quest for', 'Lost in'],
-        'Mystery':   ['Secrets of', 'The Hidden', 'Riddles of', "The Unknown"],
-        'Sci-Fi':    ['Signal from', 'Across the', 'The Last', 'Echoes of'],
-        'Romance':   ['Hearts in', 'A Dream of', 'Where Love', 'Longing for'],
-        'Thriller':  ['Run from', 'Behind the', 'No Escape from', 'Chasing'],
-        'Surreal':   ['Drifting Through', 'The Fluid', 'Lost in', 'Falling into'],
-        'Spiritual': ['Light of', 'The Sacred', 'Echoes of the', 'Journey to'],
-        'Comedy':    ['The Absurd', 'Much Ado About', 'Laughing Through', 'The Bizarre'],
-    }
     doc = NLP(text)
     nouns = [t.lemma_.capitalize() for t in doc if t.pos_ in ('NOUN', 'PROPN') and len(t.lemma_) > 3]
     noun = nouns[0] if nouns else 'the Unknown'
     import random
-    prefix_list = prefixes.get(genre, prefixes['Surreal'])
+    prefix_list = GENRE_PREFIXES.get(genre, GENRE_PREFIXES['Surreal'])
     return f"{random.choice(prefix_list)} {noun}"
