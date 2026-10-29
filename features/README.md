@@ -12,8 +12,8 @@ text. Nothing here talks to the database or the Flask app directly —
 | [hvdc.py](hvdc.py) | Simplified Hall-Van de Castle-style counts (characters, aggression/friendliness, misfortune/good fortune, settings) | Real, tested; **approximation only** — not the validated human-coded HVdC system |
 | [narrative.py](narrative.py) | Length, dominant tense, first-person ratio | Real, tested |
 | [embeddings.py](embeddings.py) | Shared `all-MiniLM-L6-v2` sentence-embedding loader | Real, tested (shared with `models/train_sbert_logreg.py` in Phase 4) |
-| [bizarreness.py](bizarreness.py) | Cosine distance between consecutive sentence embeddings | Real, tested |
-| [topics.py](topics.py) | BERTopic theme topics across a corpus | Real, tested on tiny synthetic corpora only — not yet run on real dream text (0 collected so far) |
+| [bizarreness.py](bizarreness.py) | Cosine distance between consecutive sentence embeddings | Real, tested end-to-end with the real `all-MiniLM-L6-v2` model (confirms disjointed text scores higher than coherent text) |
+| [topics.py](topics.py) | BERTopic theme topics across a corpus | Code + tests written; the `@pytest.mark.slow` happy-path test hasn't run yet — `bertopic`/`umap-learn` were still installing (slow network) as of this commit. Not yet run on real dream text either way (0 collected so far). |
 | [lucidity.py](lucidity.py) | Lucid-dream probability | **Keyword heuristic, not a trained classifier** — no gold `gold_lucid` labels exist yet. `train_lucid_classifier()` is the hook to replace this once they do. |
 | [nightmare.py](nightmare.py) | Nightmare vs. pleasant classification | **Heuristic from emotion_arc + hvdc counts, not a trained classifier** — same reason as lucidity.py. `train_nightmare_classifier()` is the hook. Thresholds (0.4/0.6) are arbitrary, not calibrated against gold data. |
 
