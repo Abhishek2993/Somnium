@@ -31,6 +31,35 @@ def init_db():
                 created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         """)
+        # Reddit-collected dream posts (see data/collect_reddit.py). Never
+        # stores usernames -- author is used only to filter deleted posts.
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS reddit_dreams (
+                id            INTEGER PRIMARY KEY AUTOINCREMENT,
+                post_id       TEXT NOT NULL UNIQUE,
+                subreddit     TEXT NOT NULL,
+                created_utc   REAL NOT NULL,
+                flair         TEXT,
+                title         TEXT NOT NULL,
+                body          TEXT NOT NULL,
+                score         INTEGER DEFAULT 0,
+                num_comments  INTEGER DEFAULT 0,
+                word_count    INTEGER NOT NULL,
+                content_hash  TEXT NOT NULL UNIQUE,
+                collected_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        """)
+        # Optional local DreamBank corpus (see data/dreambank_loader.py).
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS dreambank_dreams (
+                id            INTEGER PRIMARY KEY AUTOINCREMENT,
+                source_label  TEXT,
+                text          TEXT NOT NULL,
+                word_count    INTEGER NOT NULL,
+                content_hash  TEXT NOT NULL UNIQUE,
+                collected_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        """)
         conn.commit()
 
 
@@ -86,3 +115,65 @@ def get_dream_by_id(dream_id: int) -> dict | None:
         d['entities'] = json.loads(d.get('entities') or '[]')
         return d
     return None
+
+
+# ── reddit_dreams ────────────────────────────────────────────────────────────
+
+def insert_reddit_dream(record: dict) -> int | None:
+    """
+    Insert a collected Reddit post. Returns the new row id, or None if a
+    row with the same post_id or content_hash already exists (resumable:
+    safe to call repeatedly with overlapping data).
+    """
+    with get_conn() as conn:
+        cur = conn.execute("""
+            INSERT OR IGNORE INTO reddit_dreams
+                (post_id, subreddit, created_utc, flair, title, body,
+                 score, num_comments, word_count, content_hash)
+            VALUES (:post_id, :subreddit, :created_utc, :flair, :title, :body,
+                    :score, :num_comments, :word_count, :content_hash)
+        """, record)
+        conn.commit()
+        return cur.lastrowid if cur.rowcount > 0 else None
+
+
+def get_reddit_dreams(subreddit: str | None = None) -> list:
+    query = "SELECT * FROM reddit_dreams"
+    params: tuple = ()
+    if subreddit:
+        query += " WHERE subreddit = ?"
+        params = (subreddit,)
+    query += " ORDER BY created_utc DESC"
+    with get_conn() as conn:
+        rows = conn.execute(query, params).fetchall()
+    return [dict(r) for r in rows]
+
+
+def get_reddit_post_ids(subreddit: str | None = None) -> set:
+    query = "SELECT post_id FROM reddit_dreams"
+    params: tuple = ()
+    if subreddit:
+        query += " WHERE subreddit = ?"
+        params = (subreddit,)
+    with get_conn() as conn:
+        rows = conn.execute(query, params).fetchall()
+    return {r['post_id'] for r in rows}
+
+
+# ── dreambank_dreams ─────────────────────────────────────────────────────────
+
+def insert_dreambank_dream(record: dict) -> int | None:
+    """Insert a dream parsed from a local DreamBank file. See insert_reddit_dream."""
+    with get_conn() as conn:
+        cur = conn.execute("""
+            INSERT OR IGNORE INTO dreambank_dreams (source_label, text, word_count, content_hash)
+            VALUES (:source_label, :text, :word_count, :content_hash)
+        """, record)
+        conn.commit()
+        return cur.lastrowid if cur.rowcount > 0 else None
+
+
+def get_dreambank_dreams() -> list:
+    with get_conn() as conn:
+        rows = conn.execute("SELECT * FROM dreambank_dreams ORDER BY id").fetchall()
+    return [dict(r) for r in rows]

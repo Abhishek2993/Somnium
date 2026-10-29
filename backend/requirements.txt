@@ -6,3 +6,5 @@ scikit-learn==1.8.0
 joblib==1.5.3
 python-dotenv==1.1.0
 pytest==8.4.1
+praw==8.0.3
+langdetect==1.0.9
