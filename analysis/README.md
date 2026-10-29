@@ -6,7 +6,7 @@
 | [compare_dream_types.py](compare_dream_types.py) | Nightmare vs. lucid vs. general, every `features/` numeric feature, pairwise Cohen's d + bootstrap CI | Real statistics, run on synthetic data (see caveat) |
 | [emotion_arcs.py](emotion_arcs.py) | Emotion arc (start/end/slope) aggregated per group, with bootstrap CIs | Real statistics, run on synthetic data (see caveat) |
 | [posting_time.py](posting_time.py) | Hour-of-day histogram of Reddit post times | Written, not yet run — 0 rows in `reddit_dreams` so far |
-| [umap_embeddings.py](umap_embeddings.py) | Interactive UMAP (Plotly HTML) of sentence embeddings, colored by genre | Written; blocked on `umap-learn` finishing install in this environment |
+| [umap_embeddings.py](umap_embeddings.py) | Interactive UMAP (Plotly HTML) of sentence embeddings, colored by genre | Real, tested, and run for real on the synthetic corpus — see `reports/umap_embeddings.html` |
 
 ## The nightmare/lucid/general caveat
 
