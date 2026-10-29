@@ -114,6 +114,206 @@ _CORPUS = [
     ("I gave a speech and everything went comically wrong in front of crowds", "Comedy"),
     ("A dog drove a car while cats filed paperwork in a giggling office", "Comedy"),
     ("The most ridiculous situation unfolded and I could not stop laughing", "Comedy"),
+
+    # Nightmare
+    ("I tried to run but my legs would not move no matter how hard I tried", "Nightmare"),
+    ("My teeth crumbled out one by one while I stared in the mirror in panic", "Nightmare"),
+    ("I was falling from a great height with no way to stop or wake up", "Nightmare"),
+    ("Something was chasing me down an endless hallway and every door was locked", "Nightmare"),
+    ("I was drowning and could not reach the surface no matter how I struggled", "Nightmare"),
+    ("I screamed for help but no sound came out of my mouth at all", "Nightmare"),
+    ("I was buried alive and could feel the walls closing in around me", "Nightmare"),
+    ("I woke up inside the dream and realised I was still trapped and could not escape", "Nightmare"),
+
+    # Lucid
+    ("I realised I was dreaming and chose to fly straight up into the clouds", "Lucid"),
+    ("Once I knew it was a dream I changed the scenery just by wishing it", "Lucid"),
+    ("I pinched myself, confirmed I was dreaming, and summoned a door to anywhere", "Lucid"),
+    ("Aware this was a dream, I controlled the gravity and walked up the walls", "Lucid"),
+    ("I noticed the odd details that proved I was dreaming and took control of the plot", "Lucid"),
+    ("Knowing I was asleep, I called out and reshaped the dream world around me", "Lucid"),
+    ("I stabilised the dream by rubbing my hands and then decided where to go next", "Lucid"),
+    ("Recognising the dream signs, I stayed calm and steered the dream exactly where I wanted", "Lucid"),
+
+    # Supernatural
+    ("A ghost drifted through the locked door and stood silently at the foot of my bed", "Supernatural"),
+    ("Spirits whispered from the walls of the old house as the lights flickered on their own", "Supernatural"),
+    ("An unseen presence moved objects across the room while the temperature dropped suddenly", "Supernatural"),
+    ("A poltergeist hurled furniture around the attic while I hid behind the door", "Supernatural"),
+    ("The medium channelled a voice that was not her own as candles guttered out", "Supernatural"),
+    ("Shadows peeled off the walls and moved independently across the ceiling", "Supernatural"),
+    ("A haunted mirror showed a reflection that moved a second after I did", "Supernatural"),
+    ("The seance table rattled and cold hands gripped mine in the dark", "Supernatural"),
+
+    # Apocalyptic
+    ("The sky turned red as meteors fell and cities crumbled into dust around me", "Apocalyptic"),
+    ("Survivors scavenged through a ruined city after the collapse of civilisation", "Apocalyptic"),
+    ("A plague swept the world and I wandered empty streets looking for other survivors", "Apocalyptic"),
+    ("The ground split open and ash blotted out the sun as everyone fled", "Apocalyptic"),
+    ("I hoarded supplies in a bunker while the world outside burned to the ground", "Apocalyptic"),
+    ("Floodwaters swallowed the last standing buildings as the final broadcast went silent", "Apocalyptic"),
+    ("Robots and ash filled the horizon in the last days of the old world", "Apocalyptic"),
+    ("I led a small group of survivors through the wasteland searching for clean water", "Apocalyptic"),
+
+    # War
+    ("Artillery shook the trench as soldiers around me ducked for cover under fire", "War"),
+    ("I carried a wounded comrade across no man's land while bullets cracked overhead", "War"),
+    ("Tanks rolled through the ruined village as the resistance regrouped in the cellars", "War"),
+    ("Orders came to hold the line as the enemy advanced through the smoke", "War"),
+    ("I radioed for reinforcements while explosions lit up the night sky", "War"),
+    ("The platoon marched through mud toward a front line that never seemed to end", "War"),
+    ("A ceasefire was called just as the final assault was about to begin", "War"),
+    ("I buried a fallen friend's dog tags beneath a tree near the battlefield", "War"),
+
+    # Crime
+    ("I planned a heist on a vault guarded by lasers and rotating cameras", "Crime"),
+    ("The getaway car sped through red lights while sirens closed in behind us", "Crime"),
+    ("A crime boss demanded the stolen diamonds be returned before midnight", "Crime"),
+    ("I picked the lock of a pawn shop looking for the missing evidence", "Crime"),
+    ("The gang split the loot in a warehouse while a rival crew watched from outside", "Crime"),
+    ("I laundered the cash through a chain of fake businesses across the city", "Crime"),
+    ("A informant tipped off the police just as the robbery was underway", "Crime"),
+    ("I hid the gun under the floorboards before the detectives searched the house", "Crime"),
+
+    # Western
+    ("Dust rose over the dry plain as a lone rider approached the saloon at noon", "Western"),
+    ("I drew my revolver as the outlaw's gang rode into the one-street town", "Western"),
+    ("The sheriff posted a bounty on the train robbers hiding in the canyon", "Western"),
+    ("Cattle stampeded across the ranch as cowboys scrambled to turn the herd", "Western"),
+    ("A standoff at high noon left the whole town watching from behind shuttered windows", "Western"),
+    ("I tracked the horse thief across the desert until the trail went cold", "Western"),
+    ("The stagecoach was ambushed at the pass just before it reached the fort", "Western"),
+    ("Tumbleweeds rolled past the saloon doors as the piano player fell silent", "Western"),
+
+    # Historical
+    ("I stood among togas and marble columns as senators debated in the ancient forum", "Historical"),
+    ("Knights in full armour jousted before a medieval castle crowded with banners", "Historical"),
+    ("I sailed on a wooden galleon charting unknown coastlines centuries ago", "Historical"),
+    ("Pharaohs were carried through torch-lit halls lined with hieroglyphs and gold", "Historical"),
+    ("I marched with Victorian factory workers through smoke-filled cobbled streets", "Historical"),
+    ("A royal court whispered of conspiracy behind velvet curtains and candlelight", "Historical"),
+    ("I witnessed a revolution unfold in the square as old banners were torn down", "Historical"),
+    ("Monks copied manuscripts by candlelight in a stone abbey centuries in the past", "Historical"),
+
+    # Drama
+    ("My family argued around the dinner table about a secret that had been kept for years", "Drama"),
+    ("I confronted my estranged sister about the inheritance that tore our family apart", "Drama"),
+    ("A courtroom fell silent as the verdict about my brother was finally read aloud", "Drama"),
+    ("I sat beside a hospital bed holding my parent's hand through the long night", "Drama"),
+    ("The wedding speech turned into a tearful confession in front of every guest", "Drama"),
+    ("I packed my bags while my partner begged me to reconsider leaving", "Drama"),
+    ("An old letter revealed a truth about my childhood I had never been told", "Drama"),
+    ("I stood at the funeral trying to find the words I never got to say", "Drama"),
+
+    # Tragedy
+    ("I watched helplessly as the ship I was on slowly sank beneath the waves", "Tragedy"),
+    ("A fire swept through the theatre before anyone could reach the only exit", "Tragedy"),
+    ("I arrived moments too late to say goodbye before the ambulance left", "Tragedy"),
+    ("The bridge collapsed just as the last car was crossing in the rain", "Tragedy"),
+    ("I buried my childhood home under rubble after the earthquake levelled the street", "Tragedy"),
+    ("A single mistake cost us everything we had spent years building together", "Tragedy"),
+    ("I read the telegram twice before the news truly sank in", "Tragedy"),
+    ("The whole town gathered in silence as the flag was lowered to half mast", "Tragedy"),
+
+    # Action
+    ("I leapt from a moving train onto a motorcycle to escape the explosion behind me", "Action"),
+    ("Gunfire erupted as I vaulted over rooftops chasing the van through the city", "Action"),
+    ("I disarmed the bomb with seconds left while dodging falling debris", "Action"),
+    ("A car chase tore through the market as crates and stalls flew into the street", "Action"),
+    ("I fought off three attackers on a collapsing bridge above the river", "Action"),
+    ("The helicopter dropped a rope just as the building's roof gave way beneath me", "Action"),
+    ("I sprinted across rooftops under gunfire to reach the extraction point in time", "Action"),
+    ("A fistfight spilled out of the bar and into the middle of a busy highway", "Action"),
+
+    # Psychological
+    ("I could not tell if the voice in my head belonged to me or someone else", "Psychological"),
+    ("The same hallway kept repeating no matter which direction I turned", "Psychological"),
+    ("I questioned whether the people around me were real or figments of my own mind", "Psychological"),
+    ("A therapist in the dream kept asking questions that unravelled my own memories", "Psychological"),
+    ("I woke up inside another dream and could no longer trust what was real", "Psychological"),
+    ("My reflection spoke to me with thoughts I had never said out loud", "Psychological"),
+    ("I obsessively recounted the same memory until it stopped making sense", "Psychological"),
+    ("Paranoia crept in as everyone's faces seemed to shift when I looked away", "Psychological"),
+
+    # Noir
+    ("Rain streaked the window of my office as a mysterious client walked in at midnight", "Noir"),
+    ("A smoky jazz bar hid secrets behind every half-lit booth and whispered deal", "Noir"),
+    ("I followed the dame in the red coat through alleys lit only by neon signs", "Noir"),
+    ("The detective's trench coat dripped rain as he lit a cigarette under a streetlamp", "Noir"),
+    ("A double-crossing partner left me holding the blame for a crime I didn't commit", "Noir"),
+    ("I pieced together the case from torn photographs scattered across my desk", "Noir"),
+    ("The femme fatale's story didn't add up, but I followed the lead anyway", "Noir"),
+    ("Venetian blinds cut the moonlight into stripes across the dead man's floor", "Noir"),
+
+    # Domestic
+    ("I was washing dishes while my family argued gently about weekend chores", "Domestic"),
+    ("We rearranged the living room furniture while the kids napped upstairs", "Domestic"),
+    ("I burned the dinner again and we ended up ordering takeout and laughing about it", "Domestic"),
+    ("My parents and siblings gathered in the kitchen making an ordinary Sunday breakfast", "Domestic"),
+    ("I folded laundry while the television played quietly in the next room", "Domestic"),
+    ("We painted the nursery together, arguing lightly over which shade of yellow", "Domestic"),
+    ("I was fixing a leaky faucet while my partner read on the couch nearby", "Domestic"),
+    ("The whole family squeezed around a small table for an ordinary weeknight dinner", "Domestic"),
+
+    # Travel
+    ("I missed my connecting flight and wandered an unfamiliar airport for hours", "Travel"),
+    ("Our train rattled through snowy mountains toward a city I had never seen", "Travel"),
+    ("I backpacked through winding market streets, bartering in a language I didn't speak", "Travel"),
+    ("The road trip took an unplanned detour through a town that wasn't on any map", "Travel"),
+    ("I boarded a ferry at dawn watching the coastline shrink behind us", "Travel"),
+    ("My passport was missing just as the customs line began to move", "Travel"),
+    ("We hiked to a hidden village only reachable by a single rope bridge", "Travel"),
+    ("I checked into a hotel where every hallway led to a different country", "Travel"),
+
+    # Sports
+    ("I sprinted the final lap of the race as the crowd roared from the stands", "Sports"),
+    ("My team was down by one point with seconds left on the clock", "Sports"),
+    ("I dove for the finish line just as the swimmer beside me lunged forward", "Sports"),
+    ("The coach called a timeout to redraw the play before the final whistle", "Sports"),
+    ("I missed the penalty kick and the entire stadium fell silent", "Sports"),
+    ("We trained before dawn for a championship that suddenly felt within reach", "Sports"),
+    ("The marathon route wound through streets lined with cheering strangers", "Sports"),
+    ("I scored the winning goal in overtime as my teammates rushed the field", "Sports"),
+
+    # Musical
+    ("The whole street burst into choreographed song as I walked to work", "Musical"),
+    ("I stepped on stage and the orchestra swelled the moment I opened my mouth", "Musical"),
+    ("Strangers on the subway suddenly knew all the words to the same song", "Musical"),
+    ("I danced across rooftops while a full band played from every open window", "Musical"),
+    ("The audience joined the chorus as spotlights swept across the stage", "Musical"),
+    ("My family broke into harmony mid-argument and somehow it resolved everything", "Musical"),
+    ("A marching band led me through the city as confetti rained from the balconies", "Musical"),
+    ("I sang a duet with a stranger on a rooftop under a spotlight moon", "Musical"),
+
+    # Childhood
+    ("I was back in my childhood bedroom, small again, under the same glow-in-the-dark stars", "Childhood"),
+    ("My old best friend and I built a fort out of blankets in the living room", "Childhood"),
+    ("I rode my first bicycle down the street where I grew up, wobbling with joy", "Childhood"),
+    ("My grandmother read me the same bedtime story she used to tell every night", "Childhood"),
+    ("I was back at my old school desk, drawing in the margins of a worn notebook", "Childhood"),
+    ("We played hide and seek in a backyard that felt impossibly huge again", "Childhood"),
+    ("I unwrapped a toy I had forgotten I ever owned on a sunlit Christmas morning", "Childhood"),
+    ("My childhood dog ran to greet me at the door exactly as he used to", "Childhood"),
+
+    # Workplace
+    ("I showed up to an important meeting and realised I had forgotten the entire presentation", "Workplace"),
+    ("My boss kept moving the deadline earlier every time I walked past her office", "Workplace"),
+    ("I was stuck replying to the same email over and over without it ever sending", "Workplace"),
+    ("The office elevator only went to floors that didn't exist on the directory", "Workplace"),
+    ("I gave a presentation in my pyjamas to a boardroom that didn't seem to notice", "Workplace"),
+    ("My computer screen filled with error messages right before the big client call", "Workplace"),
+    ("I was promoted and demoted in the same meeting without anyone explaining why", "Workplace"),
+    ("The photocopier swallowed my badge just as the fire alarm started blaring", "Workplace"),
+
+    # Political
+    ("I stood before a crowd giving a speech I hadn't finished writing", "Political"),
+    ("Protesters filled the square demanding answers from a government that stayed silent", "Political"),
+    ("I cast a vote in an election where the candidates kept changing their faces", "Political"),
+    ("A debate stage lit up as two rivals argued over a law I had never heard of", "Political"),
+    ("I was smuggling documents past a checkpoint guarded by silent officials", "Political"),
+    ("The parliament erupted into shouting as a vote was called in the middle of the night", "Political"),
+    ("I negotiated a treaty between two nations across a table that kept growing longer", "Political"),
+    ("A new leader's portrait replaced the old one on every wall overnight", "Political"),
 ]
 
 GENRES = sorted(set(label for _, label in _CORPUS))

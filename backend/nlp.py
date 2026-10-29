@@ -84,23 +84,47 @@ def get_named_entities(text: str) -> list[dict]:
     return entities
 
 
+# Title prefixes per genre, used by generate_title(). Module-level so new
+# genres (see ml.GENRES) can extend this dict directly.
+GENRE_PREFIXES = {
+    'Fantasy':   ['The Enchanted', 'A Realm of', 'Whispers of', 'Beyond the'],
+    'Horror':    ['Shadows of', 'The Dark', 'Echoes of', 'Fear in'],
+    'Adventure': ['Beyond the', 'Journey to', 'The Quest for', 'Lost in'],
+    'Mystery':   ['Secrets of', 'The Hidden', 'Riddles of', "The Unknown"],
+    'Sci-Fi':    ['Signal from', 'Across the', 'The Last', 'Echoes of'],
+    'Romance':   ['Hearts in', 'A Dream of', 'Where Love', 'Longing for'],
+    'Thriller':  ['Run from', 'Behind the', 'No Escape from', 'Chasing'],
+    'Surreal':   ['Drifting Through', 'The Fluid', 'Lost in', 'Falling into'],
+    'Spiritual': ['Light of', 'The Sacred', 'Echoes of the', 'Journey to'],
+    'Comedy':    ['The Absurd', 'Much Ado About', 'Laughing Through', 'The Bizarre'],
+    'Nightmare':    ['Trapped in', 'No Escape from', 'The Dread of', 'Drowning in'],
+    'Lucid':        ['Awake Within', 'Mastering', 'The Clear Dream of', 'Steering'],
+    'Supernatural': ['Haunting of', 'The Unseen', 'Whispers from', 'The Spirit of'],
+    'Apocalyptic':  ['The Last Days of', 'Ashes of', 'The Fall of', 'Ruins of'],
+    'War':          ['The Front Line of', 'Trenches of', 'Battle for', 'The Siege of'],
+    'Crime':        ['The Heist of', 'Shadows of the', "Thief's", 'The Vault of'],
+    'Western':      ['The Outlaw of', 'Dust of', 'Showdown at', 'The Trail to'],
+    'Historical':   ['Chronicles of', 'The Age of', 'Echoes of Old', 'The Court of'],
+    'Drama':        ['The Weight of', 'Between Us and', 'The Truth About', 'Unspoken'],
+    'Tragedy':      ['The Fall of', 'Too Late for', 'The Loss of', 'Ashes of'],
+    'Action':       ['Chasing', 'No Time to', 'The Escape from', 'Running from'],
+    'Psychological': ['The Mind of', "Who's Real in", 'Unravelling', 'The Loop of'],
+    'Noir':         ['The Case of', 'Shadows Over', 'Rain on', 'The Last Lead on'],
+    'Domestic':     ['An Ordinary', 'Home and', 'The Quiet of', 'Evenings with'],
+    'Travel':       ['The Road to', 'Lost on the Way to', 'Journey Through', 'Passage to'],
+    'Sports':       ['The Final Lap of', 'Racing for', 'The Last Play of', 'Chasing the Win at'],
+    'Musical':      ['The Song of', 'A Chorus for', 'Dancing Through', 'The Melody of'],
+    'Childhood':    ['Back to', 'The Summer of', 'Echoes of Young', 'Return to'],
+    'Workplace':    ['The Meeting About', 'Deadline for', 'The Office of', 'Clocking In at'],
+    'Political':    ['The Vote on', 'The Square of', 'Speeches on', 'The Negotiation of'],
+}
+
+
 def generate_title(text: str, genre: str) -> str:
     """Generate an evocative dream title using spaCy + genre prefix."""
-    prefixes = {
-        'Fantasy':   ['The Enchanted', 'A Realm of', 'Whispers of', 'Beyond the'],
-        'Horror':    ['Shadows of', 'The Dark', 'Echoes of', 'Fear in'],
-        'Adventure': ['Beyond the', 'Journey to', 'The Quest for', 'Lost in'],
-        'Mystery':   ['Secrets of', 'The Hidden', 'Riddles of', "The Unknown"],
-        'Sci-Fi':    ['Signal from', 'Across the', 'The Last', 'Echoes of'],
-        'Romance':   ['Hearts in', 'A Dream of', 'Where Love', 'Longing for'],
-        'Thriller':  ['Run from', 'Behind the', 'No Escape from', 'Chasing'],
-        'Surreal':   ['Drifting Through', 'The Fluid', 'Lost in', 'Falling into'],
-        'Spiritual': ['Light of', 'The Sacred', 'Echoes of the', 'Journey to'],
-        'Comedy':    ['The Absurd', 'Much Ado About', 'Laughing Through', 'The Bizarre'],
-    }
     doc = NLP(text)
     nouns = [t.lemma_.capitalize() for t in doc if t.pos_ in ('NOUN', 'PROPN') and len(t.lemma_) > 3]
     noun = nouns[0] if nouns else 'the Unknown'
     import random
-    prefix_list = prefixes.get(genre, prefixes['Surreal'])
+    prefix_list = GENRE_PREFIXES.get(genre, GENRE_PREFIXES['Surreal'])
     return f"{random.choice(prefix_list)} {noun}"
