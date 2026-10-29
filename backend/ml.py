@@ -319,6 +319,21 @@ _CORPUS = [
 GENRES = sorted(set(label for _, label in _CORPUS))
 
 
+def build_baseline_pipeline() -> Pipeline:
+    """Public accessor for the baseline TF-IDF+LinearSVC pipeline (an
+    untrained clone each call) -- used by models/evaluate.py to compare
+    the baseline against the newer models on equal footing."""
+    return _build_pipeline()
+
+
+def get_training_corpus() -> tuple[list[str], list[str]]:
+    """(texts, labels) for the full synthetic genre corpus -- the only
+    labeled genre dataset that exists right now (see models/README.md).
+    Used by models/evaluate.py to compare classifiers on equal footing."""
+    texts, labels = zip(*_CORPUS)
+    return list(texts), list(labels)
+
+
 def _build_pipeline() -> Pipeline:
     return Pipeline([
         ('tfidf', TfidfVectorizer(
