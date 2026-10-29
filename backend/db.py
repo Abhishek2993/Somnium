@@ -61,24 +61,50 @@ def init_db():
             )
         """)
         conn.commit()
+        _migrate_sleep_log_columns(conn)
+
+
+def _migrate_sleep_log_columns(conn) -> None:
+    """
+    Adds optional sleep-log columns to `dreams` (duration in hours,
+    quality 1-5) when ENABLE_SLEEP_MODULE is on (see backend/config.py,
+    Phase 6 / docs/biology_link.md). SQLite has no "ADD COLUMN IF NOT
+    EXISTS", so check PRAGMA table_info first; a no-op once already added.
+    """
+    import config
+    if not config.ENABLE_SLEEP_MODULE:
+        return
+
+    existing_columns = {row['name'] for row in conn.execute("PRAGMA table_info(dreams)")}
+    if 'sleep_duration_hours' not in existing_columns:
+        conn.execute('ALTER TABLE dreams ADD COLUMN sleep_duration_hours REAL')
+    if 'sleep_quality' not in existing_columns:
+        conn.execute('ALTER TABLE dreams ADD COLUMN sleep_quality INTEGER')
+    conn.commit()
 
 
 def insert_dream(dream: dict) -> int:
+    import config
+
+    fields = {
+        'date':       dream.get('date', ''),
+        'title':      dream.get('title', ''),
+        'text':       dream.get('text', ''),
+        'genre':      dream.get('genre', 'Surreal'),
+        'confidence': dream.get('confidence', 0.0),
+        'mood':       dream.get('mood', ''),
+        'type':       dream.get('type', 'Normal'),
+        'keywords':   json.dumps(dream.get('keywords', [])),
+        'entities':   json.dumps(dream.get('entities', [])),
+    }
+    if config.ENABLE_SLEEP_MODULE:
+        fields['sleep_duration_hours'] = dream.get('sleep_duration_hours')
+        fields['sleep_quality'] = dream.get('sleep_quality')
+
+    columns = ', '.join(fields.keys())
+    placeholders = ', '.join(f':{name}' for name in fields.keys())
     with get_conn() as conn:
-        cur = conn.execute("""
-            INSERT INTO dreams (date, title, text, genre, confidence, mood, type, keywords, entities)
-            VALUES (:date, :title, :text, :genre, :confidence, :mood, :type, :keywords, :entities)
-        """, {
-            'date':       dream.get('date', ''),
-            'title':      dream.get('title', ''),
-            'text':       dream.get('text', ''),
-            'genre':      dream.get('genre', 'Surreal'),
-            'confidence': dream.get('confidence', 0.0),
-            'mood':       dream.get('mood', ''),
-            'type':       dream.get('type', 'Normal'),
-            'keywords':   json.dumps(dream.get('keywords', [])),
-            'entities':   json.dumps(dream.get('entities', [])),
-        })
+        cur = conn.execute(f'INSERT INTO dreams ({columns}) VALUES ({placeholders})', fields)
         conn.commit()
         return cur.lastrowid
 

@@ -12,3 +12,10 @@ sentence-transformers==6.2.0
 plotly==7.1.0
 bertopic==0.17.4
 umap-learn==0.5.12
+scipy==1.17.1
+numpy==2.4.4
+# mne is used by sleep/download_sleep_edf.py but NOT installed/verified in
+# this dev environment (no GPU, multi-GB download) -- pin is the latest
+# published version as of this commit; confirm it installs cleanly before
+# relying on it for a real Sleep-EDF run.
+mne==1.13.2

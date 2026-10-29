@@ -81,6 +81,10 @@ def save_dream():
         'type':       data.get('type', 'Normal'),
         'keywords':   data.get('keywords', []),
         'entities':   data.get('entities', []),
+        # Optional sleep-log fields, only persisted when ENABLE_SLEEP_MODULE
+        # is on (see db.insert_dream / docs/biology_link.md).
+        'sleep_duration_hours': data.get('sleep_duration_hours'),
+        'sleep_quality':        data.get('sleep_quality'),
     })
     dream = get_dream_by_id(dream_id)
     return jsonify({'id': dream_id, 'dream': dream}), 201

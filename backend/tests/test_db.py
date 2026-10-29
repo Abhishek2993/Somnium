@@ -1,3 +1,4 @@
+import config
 import db
 
 
@@ -108,3 +109,54 @@ def test_insert_dreambank_dream_and_fetch_dedupes_by_hash(tmp_path, monkeypatch)
     assert first is not None
     assert second is None
     assert len(db.get_dreambank_dreams()) == 1
+
+
+def test_sleep_log_columns_absent_by_default(tmp_path, monkeypatch):
+    monkeypatch.setattr(config, 'ENABLE_SLEEP_MODULE', False)
+    _fresh_db(tmp_path, monkeypatch)
+    with db.get_conn() as conn:
+        columns = {row['name'] for row in conn.execute('PRAGMA table_info(dreams)')}
+    assert 'sleep_duration_hours' not in columns
+    assert 'sleep_quality' not in columns
+
+
+def test_sleep_log_columns_added_when_enabled(tmp_path, monkeypatch):
+    monkeypatch.setattr(config, 'ENABLE_SLEEP_MODULE', True)
+    _fresh_db(tmp_path, monkeypatch)
+    with db.get_conn() as conn:
+        columns = {row['name'] for row in conn.execute('PRAGMA table_info(dreams)')}
+    assert 'sleep_duration_hours' in columns
+    assert 'sleep_quality' in columns
+
+
+def test_sleep_log_migration_is_idempotent(tmp_path, monkeypatch):
+    monkeypatch.setattr(config, 'ENABLE_SLEEP_MODULE', True)
+    _fresh_db(tmp_path, monkeypatch)
+    db.init_db()  # calling init_db() again must not raise (duplicate ADD COLUMN)
+    with db.get_conn() as conn:
+        columns = [row['name'] for row in conn.execute('PRAGMA table_info(dreams)')]
+    assert columns.count('sleep_quality') == 1
+
+
+def test_insert_dream_stores_sleep_fields_when_enabled(tmp_path, monkeypatch):
+    monkeypatch.setattr(config, 'ENABLE_SLEEP_MODULE', True)
+    _fresh_db(tmp_path, monkeypatch)
+    dream_id = db.insert_dream({
+        'date': '2026-01-01', 'text': 'a dream',
+        'sleep_duration_hours': 7.5, 'sleep_quality': 4,
+    })
+    dream = db.get_dream_by_id(dream_id)
+    assert dream['sleep_duration_hours'] == 7.5
+    assert dream['sleep_quality'] == 4
+
+
+def test_insert_dream_ignores_sleep_fields_when_disabled(tmp_path, monkeypatch):
+    monkeypatch.setattr(config, 'ENABLE_SLEEP_MODULE', False)
+    _fresh_db(tmp_path, monkeypatch)
+    dream_id = db.insert_dream({
+        'date': '2026-01-01', 'text': 'a dream',
+        'sleep_duration_hours': 7.5, 'sleep_quality': 4,
+    })
+    dream = db.get_dream_by_id(dream_id)
+    assert 'sleep_duration_hours' not in dream
+    assert 'sleep_quality' not in dream
