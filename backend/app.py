@@ -5,12 +5,18 @@ Run: python app.py
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 
+import config
 from db import init_db, insert_dream, get_all_dreams, delete_dream, get_dream_by_id
 from nlp import extract_keywords, get_named_entities, fix_grammar, generate_title
 from ml import predict_genre
 
 app = Flask(__name__)
 CORS(app)  # Allow frontend (file:// or localhost) to call the API
+
+NON_DIAGNOSTIC_DISCLAIMER = (
+    "This analysis is for personal reflection and entertainment only. "
+    "It is not medical, psychological, or diagnostic advice."
+)
 
 # Initialise DB on startup
 init_db()
@@ -51,7 +57,7 @@ def analyze():
     # Generate evocative title
     title        = generate_title(fixed, genre)
 
-    return jsonify({
+    response = {
         'title':       title,
         'fixed_text':  fixed,
         'genre':       genre,
@@ -59,7 +65,17 @@ def analyze():
         'all_scores':  all_scores,
         'keywords':    keywords,
         'entities':    entities,
-    })
+        'disclaimer':  NON_DIAGNOSTIC_DISCLAIMER,
+    }
+
+    # Optional feature profile (emotion arc, bizarreness, sensory ratios,
+    # lucid probability) -- additive, behind ENABLE_FEATURE_PROFILE so the
+    # existing response shape is unchanged when it's off.
+    if config.ENABLE_FEATURE_PROFILE:
+        from feature_profile import build_feature_profile
+        response['feature_profile'] = build_feature_profile(fixed)
+
+    return jsonify(response)
 
 
 # ── Save dream ─────────────────────────────────────────────────────────────────

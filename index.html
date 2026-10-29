@@ -922,6 +922,16 @@
 </head>
 
 <body>
+  <div id="consentBanner"
+    style="display:none;position:fixed;left:0;right:0;bottom:0;z-index:999;background:var(--card);backdrop-filter:blur(10px);color:var(--text);padding:16px 20px;box-shadow:var(--shadow);align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;border-top:1px solid var(--border)">
+    <p style="margin:0;font-size:.8rem;color:var(--muted);max-width:640px;line-height:1.5">
+      Somnium stores the dreams you log (locally in your browser, and on this app's
+      server if it's connected) so it can analyze and show them back to you. Analysis
+      results are for personal reflection and entertainment only — not medical,
+      psychological, or diagnostic advice.
+    </p>
+    <button class="btn btn-sm" id="consentAcceptBtn" onclick="acceptConsent()" style="flex-shrink:0">Got it</button>
+  </div>
   <canvas id="stars"></canvas>
   <button class="menu-btn" id="menuBtn"><i class="fas fa-bars"></i></button>
 
@@ -1037,7 +1047,15 @@
             <div class="keywords-row" id="resKeywords"></div>
             <p style="margin:14px 0 8px;font-size:.82rem;color:var(--muted);line-height:1.65;border-left:3px solid var(--primary);padding-left:12px"
               id="resText"></p>
+            <div id="resChartWrap" style="margin-top:18px;display:none">
+              <p
+                style="margin:0 0 8px;font-size:.75rem;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.06em">
+                Genre Confidence</p>
+              <canvas id="resultChart" height="170"></canvas>
+            </div>
+            <div class="keywords-row" id="resFeatureProfile" style="margin-top:12px"></div>
             <div id="resRecs"></div>
+            <p id="resDisclaimer" style="margin:16px 0 0;font-size:.72rem;color:var(--muted);line-height:1.5"></p>
             <div style="margin-top:20px;display:flex;gap:10px;flex-wrap:wrap">
               <button class="btn" onclick="saveDream()"><i class="fas fa-bookmark"></i>Save Dream</button>
               <button class="btn btn-ghost" onclick="cancelAnalysis()"><i class="fas fa-redo"></i>Re-write</button>
@@ -1105,15 +1123,28 @@
     </div>
   </div>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.6.1/chart.umd.min.js"></script>
   <script>
     // ── Config ─────────────────────────────────────────────────────────────────────
     const API = 'http://localhost:5000/api';
     const KEY = 'somnium_v2';
+    const CONSENT_KEY = 'somnium_consent_v1';
+    const DEFAULT_DISCLAIMER = 'This analysis is for personal reflection and entertainment only. It is not medical, psychological, or diagnostic advice.';
     let dreams = JSON.parse(localStorage.getItem(KEY) || '[]');
     let pendingDream = null;
     let calYear, calMonth;
     let useAPI = false;  // toggled after health check
+    let resultChart = null;
     { const n = new Date(); calYear = n.getFullYear(); calMonth = n.getMonth(); }
+
+    // ── Consent notice ─────────────────────────────────────────────────────────────
+    function acceptConsent() {
+      localStorage.setItem(CONSENT_KEY, 'true');
+      document.getElementById('consentBanner').style.display = 'none';
+    }
+    if (!localStorage.getItem(CONSENT_KEY)) {
+      document.getElementById('consentBanner').style.display = 'flex';
+    }
 
     function saveLocal() { localStorage.setItem(KEY, JSON.stringify(dreams)); }
 
@@ -1432,6 +1463,7 @@
       btn.disabled = true;
 
       let title, genre, fixed, keywords, entities = [], confidence = null;
+      let allScores = null, featureProfile = null, disclaimer = DEFAULT_DISCLAIMER;
 
       if (useAPI) {
         try {
@@ -1448,6 +1480,9 @@
             keywords = d.keywords;
             entities = d.entities || [];
             confidence = d.confidence;
+            allScores = d.all_scores || null;
+            featureProfile = d.feature_profile || null;
+            disclaimer = d.disclaimer || DEFAULT_DISCLAIMER;
           }
         } catch (e) { console.warn('API analyze failed, falling back to JS', e); }
       }
@@ -1472,10 +1507,68 @@
       const entHTML = entities.length ? entities.slice(0, 5).map(e => `<span class="chip chip-muted" title="${e.label}">${e.text}</span>`).join('') : '';
       document.getElementById('resKeywords').innerHTML = kwHTML + (entHTML ? '<span class="chip chip-muted" style="opacity:.5">|</span>' + entHTML : '');
       document.getElementById('resRecs').innerHTML = buildRecHTML(genre);
+      document.getElementById('resDisclaimer').textContent = disclaimer;
+      renderResultChart(allScores);
+      renderFeatureProfile(featureProfile);
       document.getElementById('analysisResult').style.display = 'block';
       btn.innerHTML = '<i class="fas fa-magic"></i>Analyze &amp; Preview';
       btn.disabled = false;
       document.getElementById('analysisResult').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    // ── Results chart (Chart.js) ────────────────────────────────────────────────
+    function renderResultChart(allScores) {
+      const wrap = document.getElementById('resChartWrap');
+      if (!allScores || typeof Chart === 'undefined') { wrap.style.display = 'none'; return; }
+
+      const entries = Object.entries(allScores).sort((a, b) => b[1] - a[1]).slice(0, 8);
+      if (!entries.length) { wrap.style.display = 'none'; return; }
+
+      wrap.style.display = 'block';
+      const canvas = document.getElementById('resultChart');
+      if (resultChart) resultChart.destroy();
+      resultChart = new Chart(canvas, {
+        type: 'bar',
+        data: {
+          labels: entries.map(([g]) => g),
+          datasets: [{
+            label: 'Confidence',
+            data: entries.map(([, p]) => Math.round(p * 100)),
+            backgroundColor: entries.map(([g]) => GENRE_COLORS[g] || '#8b5cf6'),
+            borderRadius: 4,
+          }],
+        },
+        options: {
+          indexAxis: 'y',
+          responsive: true,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { beginAtZero: true, max: 100, ticks: { callback: v => v + '%' } },
+          },
+        },
+      });
+    }
+
+    // ── Feature profile chips (lucid probability, bizarreness, sensory) ──────────
+    function renderFeatureProfile(profile) {
+      const el = document.getElementById('resFeatureProfile');
+      if (!profile) { el.innerHTML = ''; return; }
+
+      const chips = [];
+      if (typeof profile.lucid_probability === 'number') {
+        chips.push(`<span class="chip chip-muted">✨ Lucid probability: ${Math.round(profile.lucid_probability * 100)}%</span>`);
+      }
+      if (profile.bizarreness && typeof profile.bizarreness.mean === 'number') {
+        chips.push(`<span class="chip chip-muted">🌀 Bizarreness: ${profile.bizarreness.mean.toFixed(2)}</span>`);
+      }
+      if (profile.sensory_ratios && typeof profile.sensory_ratios.total === 'number') {
+        chips.push(`<span class="chip chip-muted">👁️ Sensory detail: ${(profile.sensory_ratios.total * 100).toFixed(1)}%</span>`);
+      }
+      if (profile.emotion_arc && typeof profile.emotion_arc.slope === 'number') {
+        const trend = profile.emotion_arc.slope > 0.02 ? 'brightens' : profile.emotion_arc.slope < -0.02 ? 'darkens' : 'steady';
+        chips.push(`<span class="chip chip-muted">📈 Emotion arc: ${trend}</span>`);
+      }
+      el.innerHTML = chips.join('');
     }
 
     async function saveDream() {
