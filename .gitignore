@@ -137,3 +137,14 @@ __pycache__/
 .DS_Store
 .firebase/
 venv/
+
+.env
+data/raw/
+data/*.db
+models/*.joblib
+models/*.pt
+reports/
+sleep/raw/
+.pytest_cache/
+*.egg-info/
+
